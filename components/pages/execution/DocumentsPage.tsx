@@ -11,8 +11,6 @@ import { AuditActionPanel } from '../../auditor/AuditActionPanel';
 import { useAuditor } from '../../../contexts/AuditorContext';
 import { ConfirmModal } from '../../common/ConfirmModal';
 import { PrintableDocumentModal } from './PrintableDocumentModal';
-import { pdf } from '@react-pdf/renderer';
-import { QualityManualTemplate } from '../../documents/QualityManualTemplate';
 import { extractMermaidBlocks } from '../../../lib/mermaidRenderer';
 
 type DocumentStatus = 'vigente' | 'rascunho' | 'obsoleto' | 'em_aprovacao';
@@ -771,6 +769,13 @@ export const DocumentsPage: React.FC = () => {
 
             // 3. Gerar Blob do PDF
             toast.loading('Gerando PDF...', { id: toastId });
+
+            // Dynamic import of @react-pdf/renderer and QualityManualTemplate
+            const [{ pdf }, { QualityManualTemplate }] = await Promise.all([
+                import('@react-pdf/renderer'),
+                import('../../documents/QualityManualTemplate')
+            ]);
+
             const blob = await pdf(
                 <QualityManualTemplate
                     content={cleanContent}
