@@ -80,7 +80,7 @@ export const Login: React.FC = () => {
             }}
         >
             {/* Subtle overlay for better contrast */}
-            <div className="absolute inset-0 bg-white/10 backdrop-blur-[2px]"></div>
+            <div className="absolute inset-0 bg-white/40 backdrop-blur-[6px]"></div>
 
             <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
                 <div className="flex justify-center mb-8">
@@ -90,16 +90,16 @@ export const Login: React.FC = () => {
                         </div>
                     </Link>
                 </div>
-                <h2 className="text-center text-4xl font-extrabold text-gray-900 tracking-tight">
+                <h2 className="text-center text-4xl font-extrabold text-[#025159] tracking-tight">
                     Entrar na Plataforma
                 </h2>
-                <p className="mt-3 text-center text-lg text-gray-600 font-medium">
+                <p className="mt-3 text-center text-lg text-slate-700 font-medium">
                     Acesse sua conta Isotek
                 </p>
             </div>
 
             <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-                <div className="bg-white/70 backdrop-blur-xl py-10 px-6 shadow-2xl sm:rounded-3xl sm:px-12 border border-white/60">
+                <div className="bg-white/90 backdrop-blur-xl py-10 px-6 shadow-2xl sm:rounded-3xl sm:px-12 border border-white/80">
                     <form className="space-y-6" onSubmit={handleSubmit}>
                         <div>
                             <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1">
