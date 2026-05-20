@@ -658,15 +658,15 @@ export const SidebarComponent: React.FC<SidebarProps> = ({ isOpen = true, onClos
       `}>
 
         {/* Header */}
-        <div className="p-4 md:p-6 border-b border-gray-100 flex items-center justify-between">
-          <div className="flex-1">
+        <div className="p-4 md:p-6 border-b border-gray-100 flex items-center justify-between gap-2">
+          <div className="flex-1 min-w-0">
             {isAuditorUser ? (
               <div className="w-full space-y-3">
                 {isAuditorMode ? (
                   <CompanySwitcher fullWidth variant="sidebar" />
                 ) : (
-                  <div className="flex items-center gap-3">
-                    <div className="p-2 bg-[#BF7B54] rounded-lg">
+                  <div className="flex items-center gap-3 min-w-0">
+                    <div className="p-2 bg-[#BF7B54] rounded-lg shrink-0">
                       <UserCog className="w-8 h-8 text-white" />
                     </div>
                     <div className="flex-1 min-w-0">
@@ -693,15 +693,15 @@ export const SidebarComponent: React.FC<SidebarProps> = ({ isOpen = true, onClos
                 )}
               </div>
             ) : (
-              <div className="flex items-center gap-3">
+              <div className="flex items-center gap-3 min-w-0">
                 {company?.logo_url ? (
                   <img
                     src={company.logo_url}
                     alt={company.name}
-                    className="w-10 h-10 rounded-lg object-contain bg-gray-50 p-1"
+                    className="w-10 h-10 rounded-lg object-contain bg-gray-50 p-1 shrink-0"
                   />
                 ) : (
-                  <div className="p-2 bg-[#025159] rounded-lg">
+                  <div className="p-2 bg-[#025159] rounded-lg shrink-0">
                     <Building2 className="w-8 h-8 text-white" />
                   </div>
                 )}
@@ -709,7 +709,7 @@ export const SidebarComponent: React.FC<SidebarProps> = ({ isOpen = true, onClos
                   <h1 className="text-lg font-bold text-gray-900 truncate">
                     {company?.name || 'Isotek'}
                   </h1>
-                  <p className="text-xs text-[#025159] truncate">
+                  <p className="text-xs text-[#025159] whitespace-normal line-clamp-2 leading-tight mt-0.5">
                     {company?.slogan || 'Gestão da Qualidade'}
                   </p>
                 </div>
