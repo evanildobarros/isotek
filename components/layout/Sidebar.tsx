@@ -625,16 +625,16 @@ export const SidebarComponent: React.FC<SidebarProps> = ({ isOpen = true, onClos
         key={item.label}
         onClick={handleClick}
         className={`
-            w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg transition-colors duration-200
+            w-full flex items-center justify-between px-3 py-2 text-sm font-medium rounded-lg text-left transition-colors duration-200
             ${isActive
             ? 'bg-[#025159]/10 text-[#025159] dark:bg-[#025159]/20'
             : 'text-gray-600 hover:text-[#025159] hover:bg-gray-50'
           }
           `}
       >
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-3 text-left">
           {item.icon && <item.icon size={18} className={isActive ? 'text-[#025159]' : 'text-gray-400'} />}
-          <span>{item.label}</span>
+          <span className="text-left">{item.label}</span>
         </div>
         {isRestricted && needsUpgrade && !isAuditorUser && <Lock size={14} className="text-purple-500" />}
       </button>
