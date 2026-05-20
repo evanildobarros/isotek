@@ -75,7 +75,7 @@ export const Login: React.FC = () => {
         <div
             className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat relative overflow-hidden"
             style={{
-                backgroundImage: "url('/assets/login-background-new.png')",
+                backgroundImage: "url('/assets/login-background-premium.png')",
                 backgroundColor: '#f8fafc'
             }}
         >
