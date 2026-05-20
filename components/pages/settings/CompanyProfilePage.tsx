@@ -477,7 +477,7 @@ export const CompanyProfilePage: React.FC = () => {
 
                             <button
                                 onClick={() => setShowPlansModal(true)}
-                                className="px-4 py-2 bg-white border border-blue-200 text-blue-700 rounded-lg hover:bg-blue-50 transition-colors text-sm font-medium shadow-sm flex items-center gap-2"
+                                className="px-4 py-2 bg-white border border-teal-200 text-[#025159] rounded-lg hover:bg-teal-50/50 transition-colors text-sm font-medium shadow-sm flex items-center gap-2"
                             >
                                 <TrendingUp className="w-4 h-4" />
                                 Gerenciar Plano
@@ -538,7 +538,7 @@ export const CompanyProfilePage: React.FC = () => {
                                     Acesse o portal seguro para gerenciar sua assinatura, baixar notas fiscais e alterar dados de cobrança.
                                 </p>
                                 <button
-                                    className="w-full py-2 bg-blue-600 text-white rounded-lg text-sm font-medium hover:bg-blue-700 transition-colors flex items-center justify-center gap-2"
+                                    className="w-full py-2 bg-[#025159] text-white rounded-lg text-sm font-medium hover:bg-[#3F858C] transition-colors flex items-center justify-center gap-2"
                                     onClick={() => toast.info('Abrindo Portal do Cliente Stripe...')}
                                 >
                                     <CreditCard className="w-4 h-4" />
