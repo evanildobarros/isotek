@@ -234,22 +234,28 @@ export const AuditorsPublicPage: React.FC = () => {
 
                 <div className="max-w-7xl mx-auto px-4 relative z-10 text-center lg:text-left">
                     <div className="max-w-3xl">
-                        <div className="inline-block px-4 py-1.5 bg-[#4AD9D9]/20 text-[#4AD9D9] text-xs font-bold uppercase tracking-widest rounded-full mb-6">
-                            Especialistas em Qualidade
+                        <div className="flex items-center gap-3 mb-6">
+                            <div className="flex flex-col items-center">
+                                <span className="text-[10px] uppercase tracking-widest text-blue-200/70 font-bold mb-1">Certificação Garantida</span>
+                                <div className="bg-white/10 p-1 rounded-lg backdrop-blur-sm">
+                                    <img src={logo} alt="ISO 9001" className="h-8 w-auto brightness-0 invert" />
+                                </div>
+                            </div>
                         </div>
-                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-8">
-                            Auditores: Os Guardiões da <span className="text-[#0AADBF]">Excelência</span>
+                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-12">
+                            Transforme a Gestão de Auditoria em <span className="text-[#0AADBF]">Vantagem Competitiva</span>
                         </h1>
                         <p className="text-xl text-blue-100/80 mb-10 leading-relaxed">
                             Mais do que verificadores, os auditores são agentes de mudança. Conheça como a Isotek empodera esses profissionais para transformar conformidade em vantagem competitiva.
                         </p>
-                        <div className="flex flex-wrap justify-center lg:justify-start gap-4">
+                        <div className="flex flex-col items-start justify-center lg:items-start gap-4">
                             <button
                                 onClick={() => navigate('/login')}
-                                className="px-8 py-4 bg-[#0AADBF] text-white font-bold rounded-xl hover:bg-[#0AADBF]/90 transition-all shadow-xl hover:scale-105 active:scale-95"
+                                className="px-8 py-4 bg-[#FACC15] text-black font-bold rounded-xl hover:bg-[#FACC15]/90 transition-all shadow-xl hover:scale-105 active:scale-95"
                             >
                                 Começar Agora
                             </button>
+                            <span className="text-blue-100/60 text-xs font-medium ml-2">Demonstração gratuita e rápida</span>
                         </div>
                     </div>
                 </div>
