@@ -190,7 +190,7 @@ export const LandingPage: React.FC = () => {
             </header>
 
             {/* A. HERO SECTION */}
-            <section id="inicio" className="pt-32 pb-20 lg:pt-48 lg:pb-32 relative overflow-hidden min-h-screen flex items-center bg-[#F9FAFB]">
+            <section id="inicio" className="pt-32 pb-20 lg:pt-48 lg:pb-32 relative overflow-hidden min-h-screen flex items-center bg-[radial-gradient(circle_at_top,_var(--tw-gradient-stops))] from-blue-100 via-white to-white">
                 {/* Subtle Geometric Background Patterns */}
                 <div className="absolute inset-0 z-0 opacity-[0.03] pointer-events-none">
                     <svg className="absolute top-0 right-0 w-1/2 h-full" viewBox="0 0 800 800" fill="none" xmlns="http://www.w3.org/2000/svg">
@@ -210,10 +210,10 @@ export const LandingPage: React.FC = () => {
                             <div className="inline-block px-4 py-1.5 mb-6 bg-[#0AADBF]/10 text-[#0AADBF] rounded-full text-sm font-bold tracking-wide uppercase">
                                 Inteligência em Qualidade
                             </div>
-                            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tight leading-[1.05] mb-8 text-[#2D3773]">
-                                # Isotek: <br />
-                                Qualidade Inteligente. <br />
-                                <span className="text-[#0AADBF]">Resultados Reais.</span>
+                            <h1 className="text-4xl sm:text-5xl md:text-6xl lg:text-7xl font-black tracking-tighter leading-[1.05] mb-8 text-[#2D3773]">
+                                Sua Operação com <br className="hidden md:block" />
+                                <span className="text-[#0AADBF]">Precisão Cirúrgica</span> <br className="hidden md:block" />
+                                e Qualidade Inteligente.
                             </h1>
                             <p className="text-lg md:text-xl text-gray-600 mb-12 leading-relaxed max-w-xl">
                                 Transforme a gestão da qualidade da sua empresa com nossa plataforma intuitiva e a assistente de IA exclusiva para SGQ.
@@ -221,7 +221,7 @@ export const LandingPage: React.FC = () => {
                             <div className="flex flex-col sm:flex-row gap-5">
                                 <button
                                     onClick={handleLoginClick}
-                                    className="px-10 py-5 bg-[#0AADBF] text-white font-bold rounded-xl hover:bg-[#0AADBF]/90 hover:scale-[1.02] active:scale-95 transition-all shadow-xl shadow-[#0AADBF]/20 text-center"
+                                    className="px-10 py-5 bg-indigo-600 text-white font-bold rounded-xl hover:bg-indigo-500 hover:scale-[1.02] active:scale-95 transition-all shadow-[0_0_20px_rgba(79,70,229,0.4)] text-center"
                                 >
                                     Agendar Demonstração Gratuita
                                 </button>
