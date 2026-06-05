@@ -1,9 +1,25 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Menu, X, BarChart3, CheckCircle2, FileText, Search, ArrowRight } from 'lucide-react';
-import logo from './assets/isotek-logo.png';
-import aboutImg from './assets/about-executive.png';
+import {
+    Menu,
+    X,
+    ArrowRight,
+    Check,
+    FileCheck2,
+    ShieldAlert,
+    ListChecks,
+    BarChart3,
+    GitBranch,
+    CalendarCheck,
+    Quote,
+} from 'lucide-react';
 import { supabase } from './lib/supabase';
+import heroPhoneMockup from './assets/hero-phone-mockup.png';
+import brandSymbol from './assets/brand-symbol.png';
+import brandLogo from './assets/brand-logo.png';
+import avatarJoaoDoria from './assets/avatar-joao-doria.png';
+import avatarSofia from './assets/avatar-sofia.png';
+import avatarCarlos from './assets/avatar-carlos.png';
 
 interface CompanyLogo {
     id: string;
@@ -11,16 +27,98 @@ interface CompanyLogo {
     logo_url: string | null;
 }
 
+const NAV_LINKS = [
+    { label: 'Recursos', id: 'recursos' },
+    { label: 'Como funciona', id: 'como-funciona' },
+    { label: 'Depoimentos', id: 'depoimentos' },
+    { label: 'Contato', id: 'contato' },
+];
+
+// Logo Component utilizing the official brand-logo image
+export const IsotekLogo: React.FC<{ light?: boolean; className?: string; height?: number }> = ({ light = false, className = '', height = 28 }) => {
+    return (
+        <img
+            src={brandLogo}
+            alt="Isotek"
+            style={{ height }}
+            className={`w-auto object-contain transition-all duration-300 ${light ? 'brightness-0 invert' : ''} ${className}`}
+        />
+    );
+};
+
+// ---------------------------------------------------------------------------
+// Capability cell (bento grid) — clean line icons, varied sizes, no gradients
+// ---------------------------------------------------------------------------
+const Capability: React.FC<{
+    icon: React.ElementType;
+    title: string;
+    children: React.ReactNode;
+    className?: string;
+}> = ({ icon: Icon, title, children, className = '' }) => (
+    <div
+        className={`group relative flex flex-col rounded-2xl bg-brand-card border border-white/[0.07] p-7 transition-all duration-300 hover:border-brand-teal/40 hover:-translate-y-1 ${className}`}
+    >
+        <span className="inline-flex h-11 w-11 items-center justify-center rounded-xl bg-brand-teal/10 text-brand-teal ring-1 ring-inset ring-brand-teal/20 transition-colors group-hover:bg-brand-teal/15">
+            <Icon className="h-5 w-5" strokeWidth={2} aria-hidden="true" />
+        </span>
+        <h3 className="mt-5 text-lg font-bold text-white">{title}</h3>
+        <p className="mt-2 text-[15px] leading-relaxed text-white/70">{children}</p>
+    </div>
+);
+
+// ---------------------------------------------------------------------------
+// PDCA step — a real ordered sequence, so numbered markers carry meaning
+// ---------------------------------------------------------------------------
+const PdcaStep: React.FC<{ num: string; phase: string; children: React.ReactNode }> = ({ num, phase, children }) => (
+    <div className="relative flex flex-col gap-3 sm:flex-1">
+        <div className="flex items-baseline gap-3">
+            <span className="font-mono text-sm font-semibold text-brand-teal">{num}</span>
+            <span className="text-lg font-bold text-white">{phase}</span>
+        </div>
+        <p className="text-[15px] leading-relaxed text-white/65">{children}</p>
+    </div>
+);
+
+const TESTIMONIALS = [
+    {
+        quote: 'A Isotek transformou nossa auditoria interna. Saímos do pesadelo de planilhas para um processo fluido e organizado, com tudo rastreável.',
+        name: 'João Doria',
+        role: 'CEO',
+        company: 'Indústria Tech',
+        avatar: avatarJoaoDoria,
+    },
+    {
+        quote: 'A rastreabilidade dos processos e o controle de versão dos documentos chegaram a um nível que a gente não tinha como manter no papel.',
+        name: 'Sofia Kovalevsky',
+        role: 'Diretora de Qualidade',
+        company: 'TechCorp',
+        avatar: avatarSofia,
+    },
+    {
+        quote: 'Reduzimos o tempo de preparação para auditorias externas em mais de 70%. A documentação fica pronta o ano inteiro, não só na véspera.',
+        name: 'Carlos Drummond',
+        role: 'Gerente de Compliance',
+        company: 'Meta Indústria',
+        avatar: avatarCarlos,
+    },
+];
+
 export const LandingPage: React.FC = () => {
     const navigate = useNavigate();
     const [isMenuOpen, setIsMenuOpen] = useState(false);
     const [isScrolled, setIsScrolled] = useState(false);
     const [companyLogos, setCompanyLogos] = useState<CompanyLogo[]>([]);
 
+    // Demo request form
+    const [demo, setDemo] = useState({ name: '', email: '', company: '' });
+    const [demoSent, setDemoSent] = useState(false);
+
+    // Footer newsletter
+    const [footerEmail, setFooterEmail] = useState('');
+    const [footerSent, setFooterSent] = useState(false);
+
     useEffect(() => {
-        const handleScroll = () => {
-            setIsScrolled(window.scrollY > 0);
-        };
+        const handleScroll = () => setIsScrolled(window.scrollY > 50);
         window.addEventListener('scroll', handleScroll);
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
@@ -47,297 +145,486 @@ export const LandingPage: React.FC = () => {
 
     const scrollToSection = (id: string) => {
         setIsMenuOpen(false);
-        const element = document.getElementById(id);
-        if (element) element.scrollIntoView({ behavior: 'smooth' });
+        document.getElementById(id)?.scrollIntoView({ behavior: 'smooth' });
     };
 
     return (
-        <div className="min-h-screen bg-[oklch(98%_0.005_220)] text-[oklch(20%_0.01_220)] font-sans antialiased selection:bg-[oklch(75%_0.18_150)] selection:text-white">
-            
-            {/* NAVBAR - Architectural Style */}
+        <div className="min-h-screen bg-white text-brand-navy font-sans antialiased selection:bg-brand-teal selection:text-brand-navy">
+
+            {/* ============================= NAVBAR ============================= */}
             <header
-                className={`fixed w-full z-50 transition-all duration-300 border-b ${
-                    isScrolled 
-                    ? 'bg-[oklch(98%_0.005_220)]/90 backdrop-blur-md py-3 border-[oklch(80%_0.01_220)]' 
-                    : 'bg-transparent py-5 border-transparent'
+                className={`fixed inset-x-0 top-0 z-50 transition-all duration-300 ${
+                    isScrolled
+                        ? 'bg-white/90 backdrop-blur-md py-3.5 border-b border-gray-200/80 shadow-sm'
+                        : 'bg-transparent py-5'
                 }`}
             >
-                <div className="max-w-7xl mx-auto px-6 flex justify-between items-center h-12">
-                    <div className="flex items-center gap-2 cursor-pointer" onClick={() => scrollToSection('inicio')}>
-                        <img src={logo} alt="Isotek Logo" className="h-7 w-auto" />
-                    </div>
+                <div className="mx-auto flex max-w-7xl items-center justify-between px-6">
+                    <button
+                        type="button"
+                        className="flex items-center gap-2"
+                        onClick={() => scrollToSection('inicio')}
+                        aria-label="Ir para o início"
+                    >
+                        <IsotekLogo light={!isScrolled} height={28} />
+                    </button>
 
-                    <nav className="hidden md:flex items-center gap-10">
-                        {['Início', 'Sobre Nós', 'Método', 'Contato'].map((item) => (
+                    <nav className="hidden items-center gap-9 md:flex">
+                        {NAV_LINKS.map((item) => (
                             <button
-                                key={item}
-                                onClick={() => scrollToSection(item === 'Início' ? 'inicio' : item === 'Sobre Nós' ? 'sobre' : item === 'Método' ? 'funcionalidades' : 'contato')}
-                                className="text-xs font-bold uppercase tracking-widest text-[oklch(60%_0.01_220)] hover:text-[oklch(60%_0.15_220)] transition-colors"
+                                key={item.id}
+                                onClick={() => scrollToSection(item.id)}
+                                className={`text-sm font-medium transition-colors ${
+                                    isScrolled ? 'text-brand-navy/80 hover:text-brand-teal' : 'text-white/80 hover:text-white'
+                                }`}
                             >
-                                {item}
+                                {item.label}
                             </button>
                         ))}
+
+                        <span className={`h-5 w-px ${isScrolled ? 'bg-gray-200' : 'bg-white/20'}`} aria-hidden="true" />
+
                         <button
                             onClick={handleLoginClick}
-                            className="px-5 py-2 bg-[oklch(60%_0.15_220)] text-white text-xs font-bold uppercase tracking-tighter rounded-sm hover:brightness-110 transition-all"
+                            className={`text-sm font-medium transition-colors ${
+                                isScrolled ? 'text-brand-navy/80 hover:text-brand-teal' : 'text-white/80 hover:text-white'
+                            }`}
                         >
                             Entrar
                         </button>
+                        <button
+                            onClick={() => scrollToSection('demo')}
+                            className="rounded-lg bg-brand-teal px-5 py-2.5 text-sm font-semibold text-brand-navy shadow-sm transition-all hover:brightness-105 hover:shadow-md"
+                        >
+                            Agendar demo
+                        </button>
                     </nav>
 
-                    <button className="md:hidden p-2" onClick={() => setIsMenuOpen(!isMenuOpen)}>
+                    <button
+                        className={`p-2 transition-colors md:hidden ${isScrolled ? 'text-brand-navy' : 'text-white'}`}
+                        onClick={() => setIsMenuOpen(!isMenuOpen)}
+                        aria-label={isMenuOpen ? 'Fechar menu' : 'Abrir menu'}
+                        aria-expanded={isMenuOpen}
+                    >
                         {isMenuOpen ? <X size={24} /> : <Menu size={24} />}
                     </button>
                 </div>
 
-                {/* Mobile Menu */}
+                {/* Mobile menu */}
                 {isMenuOpen && (
-                    <div className="md:hidden absolute w-full bg-white border-b border-[oklch(80%_0.01_220)] animate-industrial">
-                        <div className="px-6 py-8 space-y-6">
-                            {['Início', 'Sobre Nós', 'Método', 'Contato'].map((item) => (
+                    <div className="absolute left-0 top-full w-full border-b border-gray-200 bg-white shadow-lg md:hidden">
+                        <div className="space-y-1 px-6 py-5">
+                            {NAV_LINKS.map((item) => (
                                 <button
-                                    key={item}
-                                    onClick={() => scrollToSection(item === 'Início' ? 'inicio' : item === 'Sobre Nós' ? 'sobre' : item === 'Método' ? 'funcionalidades' : 'contato')}
-                                    className="block w-full text-left text-sm font-bold uppercase tracking-widest text-[oklch(20%_0.01_220)]"
+                                    key={item.id}
+                                    onClick={() => scrollToSection(item.id)}
+                                    className="block w-full rounded-lg px-2 py-3 text-left text-base font-medium text-brand-navy transition-colors hover:bg-slate-50 hover:text-brand-teal"
                                 >
-                                    {item}
+                                    {item.label}
                                 </button>
                             ))}
                             <button
                                 onClick={handleLoginClick}
-                                className="w-full py-4 bg-[oklch(60%_0.15_220)] text-white font-bold uppercase rounded-sm"
+                                className="block w-full rounded-lg px-2 py-3 text-left text-base font-medium text-brand-navy transition-colors hover:bg-slate-50 hover:text-brand-teal"
                             >
-                                Entrar na Plataforma
+                                Entrar
+                            </button>
+                            <button
+                                onClick={() => scrollToSection('demo')}
+                                className="mt-2 w-full rounded-lg bg-brand-teal py-3.5 text-base font-semibold text-brand-navy"
+                            >
+                                Agendar demo
                             </button>
                         </div>
                     </div>
                 )}
             </header>
 
-            {/* HERO - Asymmetric & Impactful */}
-            <section id="inicio" className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 px-6 overflow-hidden">
-                <div className="max-w-7xl mx-auto grid lg:grid-cols-12 gap-12 items-start">
-                    <div className="lg:col-span-7 animate-industrial">
-                        <div className="inline-block px-3 py-1 mb-6 border border-[oklch(60%_0.15_220)] text-[oklch(60%_0.15_220)] text-[10px] font-black uppercase tracking-[0.2em]">
-                            Engenharia de Conformidade
-                        </div>
-                        <h1 className="text-5xl md:text-7xl font-extrabold tracking-tighter leading-[0.9] mb-8 text-[oklch(20%_0.01_220)]">
-                            A precisão da <br />
-                            <span className="text-[oklch(60%_0.15_220)]">qualidade digital.</span>
+            {/* ============================= HERO ============================= */}
+            <section id="inicio" className="relative flex min-h-[92vh] items-center overflow-hidden bg-brand-navy px-6 pb-24 pt-32 lg:pb-32 lg:pt-44">
+                {/* Decorative orbital rings */}
+                <div className="pointer-events-none absolute right-[-12%] top-[-8%] z-0 h-[620px] w-[620px] opacity-25">
+                    <svg viewBox="0 0 200 200" className="h-full w-full" fill="none" aria-hidden="true">
+                        <circle cx="100" cy="100" r="80" stroke="#0FDBAB" strokeWidth="0.8" strokeDasharray="4 6" />
+                        <circle cx="100" cy="100" r="96" stroke="#8CE67E" strokeWidth="0.6" />
+                    </svg>
+                </div>
+                {/* Radial depth glow */}
+                <div className="pointer-events-none absolute left-1/2 top-1/3 z-0 h-[700px] w-[700px] -translate-x-1/2 rounded-full bg-brand-teal/10 blur-[120px]" />
+
+                <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-14 lg:grid-cols-12">
+                    <div className="animate-industrial lg:col-span-6">
+                        <span className="inline-flex items-center gap-2 rounded-full border border-brand-teal/30 bg-brand-teal/10 px-4 py-1.5 text-sm font-medium text-brand-teal">
+                            <span className="h-1.5 w-1.5 rounded-full bg-brand-teal" aria-hidden="true" />
+                            SGQ baseado na ISO 9001:2015
+                        </span>
+
+                        <h1 className="mt-6 text-balance text-[2.6rem] font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-[3.85rem]">
+                            A sua ISO 9001 sempre pronta para auditoria.
                         </h1>
-                        <p className="max-w-prose text-lg md:text-xl text-[oklch(60%_0.01_220)] leading-relaxed mb-12">
-                            Substitua processos obsoletos e pilhas de papel por um ecossistema de gestão de conformidade rigoroso, auditável e eficiente. Feito para quem não aceita margens de erro.
+
+                        <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/80">
+                            A Isotek reúne documentos, riscos, não conformidades, auditorias e indicadores em uma só plataforma.
+                            Sua empresa para de correr atrás de planilha e passa a gerir a qualidade de forma contínua, no ciclo PDCA.
                         </p>
-                        <div className="flex flex-wrap gap-4">
+
+                        <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                             <button
-                                onClick={handleLoginClick}
-                                className="px-8 py-4 bg-[oklch(60%_0.15_220)] text-white font-bold rounded-sm hover:brightness-110 transition-all flex items-center gap-3 group"
+                                onClick={() => scrollToSection('demo')}
+                                className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-teal px-7 py-3.5 text-base font-semibold text-brand-navy shadow-lg shadow-brand-teal/20 transition-all hover:brightness-105 hover:shadow-xl hover:shadow-brand-teal/25"
                             >
-                                Agendar Demo <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                                Agendar demo
+                                <ArrowRight className="h-[18px] w-[18px]" aria-hidden="true" />
                             </button>
-                            <button className="px-8 py-4 border border-[oklch(60%_0.01_220)] font-bold rounded-sm hover:bg-[oklch(95%_0.005_220)] transition-all">
-                                Ver Casos
+                            <button
+                                onClick={() => scrollToSection('recursos')}
+                                className="inline-flex items-center justify-center gap-2 rounded-lg border border-white/25 px-7 py-3.5 text-base font-semibold text-white transition-all hover:border-white/50 hover:bg-white/5"
+                            >
+                                Ver os recursos
                             </button>
                         </div>
+
+                        {/* Honest trust line — product facts, not fake logos */}
+                        <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-2.5 text-sm text-white/65">
+                            {['Ciclo PDCA completo', 'Portal do auditor', 'Multiempresa e multiunidade'].map((item) => (
+                                <li key={item} className="inline-flex items-center gap-2">
+                                    <Check className="h-4 w-4 text-brand-teal" strokeWidth={2.5} aria-hidden="true" />
+                                    {item}
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-                    
-                    <div className="lg:col-span-5 relative animate-industrial" style={{ animationDelay: '0.2s' }}>
-                        <div className="aspect-[4/5] bg-[oklch(85%_0.05_220)] border border-[oklch(60%_0.15_220)] relative p-4">
-                            <div className="absolute inset-0 opacity-10" style={{ backgroundImage: 'linear-gradient([oklch(60%_0.15_220)]_1px, transparent_1px), linear-gradient(90deg, [oklch(60%_0.15_220)]_1px, transparent_1px)', backgroundSize: '20px 20px' }}></div>
-                            <div className="relative h-full w-full bg-white border border-[oklch(20%_0.01_220)] shadow-2xl p-6">
-                                <div className="h-4 w-1/3 bg-gray-100 mb-6 rounded-sm"></div>
-                                <div className="space-y-4">
-                                    {[1, 2, 3, 4].map(i => (
-                                        <div key={i} className="h-12 w-full border border-gray-100 flex items-center px-3 gap-3 group-hover:border-[oklch(60%_0.15_220)] transition-colors">
-                                            <div className="h-3 w-3 rounded-full bg-[oklch(75%_0.18_150)]"></div>
-                                            <div className="h-2 w-1/2 bg-gray-50 rounded-sm"></div>
-                                        </div>
-                                    ))}
-                                </div>
-                            </div>
+
+                    {/* Product mockup + brand symbol watermark */}
+                    <div className="relative flex min-h-[420px] items-center justify-center lg:col-span-6 lg:min-h-[620px]">
+                        <div className="pointer-events-none absolute -z-0 flex h-[80vh] max-h-[540px] items-center justify-center lg:max-h-[680px]">
+                            <img src={brandSymbol} alt="" aria-hidden="true" className="h-full w-auto object-contain opacity-50" />
                         </div>
+                        <img
+                            src={heroPhoneMockup}
+                            alt="Painel da Isotek em um celular, mostrando o progresso de um projeto de qualidade"
+                            className="relative h-[70vh] max-h-[480px] w-auto object-contain transition-transform duration-500 hover:scale-[1.03] lg:max-h-[620px]"
+                        />
                     </div>
                 </div>
             </section>
 
-            {/* SOBRE - Breaking the symmetry */}
-            <section id="sobre" className="py-24 bg-[oklch(20%_0.01_220)] text-white overflow-hidden">
-                <div className="max-w-7xl mx-auto px-6">
-                    <div className="grid lg:grid-cols-12 gap-16 items-center">
-                        <div className="lg:col-span-5 relative">
-                            <div className="relative z-10 overflow-hidden border border-white/20">
-                                <img src={aboutImg} alt="Executive Audit" className="w-full h-auto grayscale hover:grayscale-0 transition-all duration-700" />
-                            </div>
-                            <div className="absolute -bottom-6 -right-6 bg-[oklch(60%_0.15_220)] p-6 border border-white/20 z-20 hidden md:block">
-                                <div className="text-3xl font-black">10+</div>
-                                <div className="text-[10px] uppercase tracking-widest font-bold opacity-80">Anos de Experiência</div>
-                            </div>
-                        </div>
-                        <div className="lg:col-span-7 space-y-8">
-                            <div className="inline-block px-3 py-1 bg-white/10 text-white/60 text-[10px] font-black uppercase tracking-widest">
-                                Quem Somos
-                            </div>
-                            <h2 className="text-4xl md:text-6xl font-extrabold tracking-tighter leading-none">
-                                Mais que um software, <br />
-                                <span className="text-[oklch(75%_0.18_150)]">seu parceiro de conformidade.</span>
-                            </h2>
-                            <p className="max-w-prose text-lg text-white/70 leading-relaxed">
-                                A Isotek une tecnologia de ponta e expertise normativa para guiar sua empresa rumo à excelência. 
-                                Eliminamos a complexidade para que você possa focar no que realmente importa: 
-                                a qualidade do seu produto e a satisfação do seu cliente.
+            {/* ===================== TRUST / CREDENTIALS ===================== */}
+            <section className="border-y border-gray-100 bg-slate-50 py-10">
+                <div className="mx-auto max-w-7xl px-6">
+                    {companyLogos.length > 0 ? (
+                        <>
+                            <p className="mb-7 text-center text-sm font-medium text-brand-navy/50">
+                                Empresas que gerenciam a qualidade com a Isotek
                             </p>
-                            <div className="grid sm:grid-cols-2 gap-4">
-                                {[
-                                    { title: 'Auditorias Ágeis', desc: 'Redução de 60% no tempo de coleta' },
-                                    { title: 'Risco Zero', desc: 'Compliance total com normas ISO' }
-                                ].map((item, idx) => (
-                                    <div key={idx} className="p-6 border border-white/10 bg-white/5 hover:bg-white/10 transition-all group">
-                                        <div className="flex items-center gap-3 mb-3">
-                                            <CheckCircle2 className="text-[oklch(75%_0.18_150)]" size={20} />
-                                            <span className="font-bold text-sm uppercase tracking-wide">{item.title}</span>
-                                        </div>
-                                        <p className="text-sm text-white/50">{item.desc}</p>
+                            <div className="flex flex-wrap items-center justify-center gap-x-14 gap-y-8">
+                                {companyLogos.map((company) => (
+                                    <div key={company.id} className="opacity-60 grayscale transition-all duration-300 hover:opacity-100 hover:grayscale-0">
+                                        {company.logo_url ? (
+                                            <img src={company.logo_url} alt={company.name} className="h-7 w-auto object-contain md:h-8" />
+                                        ) : (
+                                            <span className="text-sm font-bold uppercase tracking-wide text-brand-navy/60">{company.name}</span>
+                                        )}
                                     </div>
                                 ))}
                             </div>
+                        </>
+                    ) : (
+                        <div className="flex flex-wrap items-center justify-center gap-x-8 gap-y-4 text-center">
+                            {['ISO 9001:2015', 'Ciclo PDCA', 'ISO 19011 (auditorias)', 'Multiempresa', 'LGPD'].map((item, i) => (
+                                <React.Fragment key={item}>
+                                    {i > 0 && <span className="hidden h-1 w-1 rounded-full bg-brand-navy/20 sm:block" aria-hidden="true" />}
+                                    <span className="text-sm font-semibold text-brand-navy/55">{item}</span>
+                                </React.Fragment>
+                            ))}
                         </div>
+                    )}
+                </div>
+            </section>
+
+            {/* ========================= RECURSOS ========================= */}
+            <section id="recursos" className="bg-brand-navy py-24 lg:py-28">
+                <div className="mx-auto max-w-7xl px-6">
+                    <div className="max-w-2xl">
+                        <h2 className="text-balance text-3xl font-extrabold tracking-tight text-white md:text-[2.6rem] md:leading-[1.1]">
+                            Tudo o que a norma pede, em um sistema só
+                        </h2>
+                        <p className="mt-4 text-lg leading-relaxed text-white/70">
+                            Cada requisito da ISO 9001 vira uma rotina simples de operar. Sem retrabalho, sem papel solto, sem perder o controle das versões.
+                        </p>
+                    </div>
+
+                    {/* Bento grid: varied spans break the identical-card reflex */}
+                    <div className="mt-14 grid gap-5 md:grid-cols-2 lg:grid-cols-3">
+                        <Capability icon={FileCheck2} title="Gestão de documentos (GED)" className="lg:col-span-2 reveal reveal-1">
+                            Controle de versão, fluxo de aprovação e distribuição. Cada documento com histórico, responsável e data, pronto para mostrar ao auditor a qualquer momento.
+                        </Capability>
+                        <Capability icon={ShieldAlert} title="Riscos e oportunidades" className="reveal reveal-2">
+                            Matriz de riscos com plano de ação e acompanhamento. Antecipe problemas antes que virem não conformidade.
+                        </Capability>
+                        <Capability icon={GitBranch} title="Não conformidades e ações corretivas" className="reveal reveal-3">
+                            Registre o desvio, investigue a causa raiz com os 5 porquês e verifique a eficácia da ação tomada.
+                        </Capability>
+                        <Capability icon={ListChecks} title="Auditorias internas e externas" className="reveal reveal-4">
+                            Planeje, conduza por checklist (ISO 19011) e trate as constatações em um fluxo único, do apontamento à resposta.
+                        </Capability>
+                        <Capability icon={BarChart3} title="Indicadores e análise crítica" className="reveal reveal-4">
+                            KPIs em tempo real e reuniões de análise crítica embasadas em dados, não em achismo.
+                        </Capability>
                     </div>
                 </div>
             </section>
 
-            {/* MÉTODO - Linear Industrial Flow */}
-            <section id="funcionalidades" className="py-24 bg-[oklch(98%_0.005_220)] relative">
-                <div className="max-w-7xl mx-auto px-6">
-                    <div className="mb-20">
-                        <div className="inline-block px-3 py-1 mb-4 border border-[oklch(60%_0.15_220)] text-[oklch(60%_0.15_220)] text-[10px] font-black uppercase tracking-[0.2em]">
-                            Metodologia
-                        </div>
-                        <h2 className="text-4xl md:text-6xl font-extrabold tracking-tighter">O Método Isotek</h2>
+            {/* ======================= COMO FUNCIONA (PDCA) ======================= */}
+            <section id="como-funciona" className="relative overflow-hidden bg-[#021f3a] py-24 lg:py-28">
+                <div className="pointer-events-none absolute -right-20 bottom-0 h-[360px] w-[360px] opacity-[0.07]">
+                    <img src={brandSymbol} alt="" aria-hidden="true" className="h-full w-full object-contain" />
+                </div>
+                <div className="relative z-10 mx-auto max-w-7xl px-6">
+                    <div className="max-w-2xl">
+                        <h2 className="text-balance text-3xl font-extrabold tracking-tight text-white md:text-[2.6rem] md:leading-[1.1]">
+                            Como a Isotek organiza sua qualidade
+                        </h2>
+                        <p className="mt-4 text-lg leading-relaxed text-white/70">
+                            A plataforma segue o ciclo PDCA da ISO 9001, do planejamento estratégico à melhoria contínua. Cada etapa tem seu lugar.
+                        </p>
                     </div>
 
-                    <div className="space-y-px bg-[oklch(80%_0.01_220)] border border-[oklch(80%_0.01_220)]">
-                        {[
-                            { step: '01', title: 'Diagnóstico', content: 'Identifique gaps nos seus processos atuais com nossa ferramenta de análise inteligente e mapeamento de riscos automático.' },
-                            { step: '02', title: 'Implementação', content: 'Digitalize documentos, centralize indicadores e treine sua equipe com nossa plataforma intuitiva e trilhas de aprendizado.' },
-                            { step: '03', title: 'Certificação', content: 'Receba auditores com confiança total, acesso rápido a evidências e garanta seu selo de qualidade ISO 9001 de forma simplificada.' },
-                        ].map((item, idx) => (
-                            <div 
-                                key={idx} 
-                                className="group bg-white p-8 md:p-12 transition-all hover:bg-[oklch(96%_0.005_220)] cursor-crosshair"
+                    <div className="mt-14 flex flex-col gap-10 sm:flex-row sm:gap-6">
+                        <PdcaStep num="01" phase="Planejar">
+                            Contexto, partes interessadas, matriz de riscos, objetivos e política da qualidade.
+                        </PdcaStep>
+                        <span className="hidden h-px flex-none self-start sm:mt-3 sm:block sm:w-8 sm:bg-gradient-to-r sm:from-brand-teal/40 sm:to-transparent" aria-hidden="true" />
+                        <PdcaStep num="02" phase="Executar">
+                            Documentos, treinamentos, fornecedores e controle de produção sempre sob controle.
+                        </PdcaStep>
+                        <span className="hidden h-px flex-none self-start sm:mt-3 sm:block sm:w-8 sm:bg-gradient-to-r sm:from-brand-teal/40 sm:to-transparent" aria-hidden="true" />
+                        <PdcaStep num="03" phase="Verificar">
+                            Auditorias, indicadores de desempenho e análise crítica pela direção.
+                        </PdcaStep>
+                        <span className="hidden h-px flex-none self-start sm:mt-3 sm:block sm:w-8 sm:bg-gradient-to-r sm:from-brand-teal/40 sm:to-transparent" aria-hidden="true" />
+                        <PdcaStep num="04" phase="Agir">
+                            Não conformidades, ações corretivas e melhoria contínua que fecham o ciclo.
+                        </PdcaStep>
+                    </div>
+                </div>
+            </section>
+
+            {/* ========================= DEPOIMENTOS ========================= */}
+            {/* NOTE: depoimentos ilustrativos. Substituir por cases reais (com autorização) antes de publicar. */}
+            <section id="depoimentos" className="border-b border-gray-100 bg-white py-24 lg:py-28">
+                <div className="mx-auto max-w-7xl px-6">
+                    <div className="max-w-2xl">
+                        <h2 className="text-balance text-3xl font-extrabold tracking-tight text-brand-navy md:text-[2.6rem] md:leading-[1.1]">
+                            Quem já tirou a qualidade do papel
+                        </h2>
+                        <p className="mt-4 text-lg leading-relaxed text-brand-navy/65">
+                            Gestores e diretores de qualidade que trocaram planilhas soltas por um processo único e rastreável.
+                        </p>
+                    </div>
+
+                    <div className="mt-14 grid gap-6 md:grid-cols-3">
+                        {TESTIMONIALS.map((t) => (
+                            <figure
+                                key={t.name}
+                                className="flex h-full flex-col rounded-2xl border border-gray-100 bg-slate-50/70 p-8 transition-all duration-300 hover:-translate-y-1 hover:border-brand-teal/30 hover:shadow-lg hover:shadow-brand-navy/5"
                             >
-                                <div className="grid md:grid-cols-12 gap-8 items-start">
-                                    <div className="md:col-span-1 text-4xl font-black text-[oklch(60%_0.15_220)] opacity-20 group-hover:opacity-100 transition-opacity">
-                                        {item.step}
+                                <Quote className="h-7 w-7 text-brand-teal/40" aria-hidden="true" />
+                                <blockquote className="mt-4 flex-grow text-[15px] leading-relaxed text-brand-navy/85">
+                                    {t.quote}
+                                </blockquote>
+                                <figcaption className="mt-7 flex items-center gap-4 border-t border-gray-200/70 pt-6">
+                                    <img src={t.avatar} alt={t.name} className="h-12 w-12 flex-shrink-0 rounded-full object-cover" />
+                                    <div className="min-w-0">
+                                        <div className="truncate font-bold text-brand-navy">{t.name}</div>
+                                        <div className="truncate text-sm text-brand-navy/55">
+                                            {t.role}, {t.company}
+                                        </div>
                                     </div>
-                                    <div className="md:col-span-11">
-                                        <h3 className="text-2xl font-bold mb-4 group-hover:text-[oklch(60%_0.15_220)] transition-colors">
-                                            {item.title}
-                                        </h3>
-                                        <p className="max-w-prose text-[oklch(60%_0.01_220)] leading-relaxed">
-                                            {item.content}
-                                        </p>
-                                    </div>
-                                </div>
-                            </div>
+                                </figcaption>
+                            </figure>
                         ))}
                     </div>
                 </div>
             </section>
 
-            {/* DEPOIMENTO - High Contrast */}
-            <section className="py-24 bg-[oklch(20%_0.01_220)] text-white relative overflow-hidden">
-                <div className="max-w-4xl mx-auto px-6 text-center relative z-10">
-                    <div className="mb-12 inline-block p-4 border border-white/20 bg-white/5">
-                        <FileText size={32} className="text-[oklch(75%_0.18_150)]" />
+            {/* ============================ DEMO CTA ============================ */}
+            <section id="demo" className="relative overflow-hidden bg-brand-navy py-24 lg:py-28">
+                <div className="pointer-events-none absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-teal/10 blur-[130px]" />
+                <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-14 px-6 lg:grid-cols-2">
+                    <div>
+                        <h2 className="text-balance text-3xl font-extrabold tracking-tight text-white md:text-[2.6rem] md:leading-[1.1]">
+                            Veja a Isotek funcionando na sua operação
+                        </h2>
+                        <p className="mt-5 text-lg leading-relaxed text-white/75">
+                            Agende uma demonstração de 30 minutos. Mostramos como migrar seus controles atuais e deixar a sua
+                            empresa pronta para a próxima auditoria, sem virar um projeto eterno.
+                        </p>
+                        <ul className="mt-8 space-y-3 text-white/75">
+                            {['Demonstração guiada com seus próprios processos', 'Sem cartão de crédito, sem compromisso', 'Resposta da nossa equipe em até 1 dia útil'].map((item) => (
+                                <li key={item} className="flex items-start gap-3">
+                                    <Check className="mt-0.5 h-5 w-5 flex-none text-brand-teal" strokeWidth={2.5} aria-hidden="true" />
+                                    <span>{item}</span>
+                                </li>
+                            ))}
+                        </ul>
                     </div>
-                    <blockquote className="text-3xl md:text-5xl font-extrabold tracking-tighter leading-tight mb-12">
-                        "A Isotek transformou nossa auditoria interna, que antes era um pesadelo de planilhas, em um processo fluido e organizado."
-                    </blockquote>
-                    <div className="flex flex-col items-center gap-4">
-                        <div className="w-14 h-14 bg-white/10 border border-white/20 flex items-center justify-center text-white font-black">
-                            JD
-                        </div>
-                        <div>
-                            <div className="font-bold text-lg uppercase tracking-widest">João Doria</div>
-                            <div className="text-xs text-white/40 uppercase tracking-widest font-bold">CEO, Indústria Tech</div>
-                        </div>
+
+                    <div className="rounded-2xl border border-white/10 bg-brand-card p-8 shadow-2xl shadow-black/20">
+                        {demoSent ? (
+                            <div className="flex flex-col items-center py-10 text-center">
+                                <span className="inline-flex h-14 w-14 items-center justify-center rounded-full bg-brand-teal/15 text-brand-teal ring-1 ring-inset ring-brand-teal/30">
+                                    <CalendarCheck className="h-7 w-7" aria-hidden="true" />
+                                </span>
+                                <h3 className="mt-5 text-xl font-bold text-white">Pedido recebido!</h3>
+                                <p className="mt-2 text-white/70">
+                                    Nossa equipe entra em contato em breve para agendar a sua demonstração.
+                                </p>
+                            </div>
+                        ) : (
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    setDemoSent(true);
+                                }}
+                                className="space-y-4"
+                            >
+                                <h3 className="text-lg font-bold text-white">Agende sua demonstração</h3>
+                                <div>
+                                    <label htmlFor="demo-name" className="mb-1.5 block text-sm font-medium text-white/80">
+                                        Nome
+                                    </label>
+                                    <input
+                                        id="demo-name"
+                                        type="text"
+                                        required
+                                        autoComplete="name"
+                                        value={demo.name}
+                                        onChange={(e) => setDemo({ ...demo, name: e.target.value })}
+                                        placeholder="Seu nome"
+                                        className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-brand-teal"
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="demo-email" className="mb-1.5 block text-sm font-medium text-white/80">
+                                        E-mail corporativo
+                                    </label>
+                                    <input
+                                        id="demo-email"
+                                        type="email"
+                                        required
+                                        autoComplete="email"
+                                        value={demo.email}
+                                        onChange={(e) => setDemo({ ...demo, email: e.target.value })}
+                                        placeholder="voce@suaempresa.com.br"
+                                        className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-brand-teal"
+                                    />
+                                </div>
+                                <div>
+                                    <label htmlFor="demo-company" className="mb-1.5 block text-sm font-medium text-white/80">
+                                        Empresa
+                                    </label>
+                                    <input
+                                        id="demo-company"
+                                        type="text"
+                                        autoComplete="organization"
+                                        value={demo.company}
+                                        onChange={(e) => setDemo({ ...demo, company: e.target.value })}
+                                        placeholder="Nome da empresa"
+                                        className="w-full rounded-lg border border-white/15 bg-white/5 px-4 py-3 text-white placeholder:text-white/40 transition-all focus:border-transparent focus:outline-none focus:ring-2 focus:ring-brand-teal"
+                                    />
+                                </div>
+                                <button
+                                    type="submit"
+                                    className="inline-flex w-full items-center justify-center gap-2 rounded-lg bg-brand-teal py-3.5 text-base font-semibold text-brand-navy shadow-lg shadow-brand-teal/20 transition-all hover:brightness-105"
+                                >
+                                    Agendar demo
+                                    <ArrowRight className="h-[18px] w-[18px]" aria-hidden="true" />
+                                </button>
+                            </form>
+                        )}
                     </div>
                 </div>
-                <div className="absolute top-0 right-0 w-1/3 h-full bg-[oklch(60%_0.15_220)] opacity-10 skew-x-12 translate-x-20"></div>
             </section>
 
-            {/* TRUSTED LOGOS */}
-            {companyLogos.length > 0 && (
-                <section className="py-24 bg-white border-y border-[oklch(80%_0.01_220)]">
-                    <div className="max-w-7xl mx-auto px-6">
-                        <div className="text-center mb-16">
-                            <h2 className="text-xs font-black uppercase tracking-[0.3em] text-[oklch(60%_0.01_220)] mb-4">Confiança Industrial</h2>
-                            <div className="h-1 w-12 bg-[oklch(60%_0.15_220)] mx-auto"></div>
-                        </div>
-                        <div className="flex flex-wrap justify-center items-center gap-12 md:gap-24">
-                            {companyLogos.map((company) => (
-                                <div key={company.id} className="grayscale opacity-40 hover:grayscale-0 hover:opacity-100 transition-all duration-500 cursor-pointer">
-                                    {company.logo_url ? (
-                                        <img src={company.logo_url} alt={company.name} className="h-8 md:h-10 w-auto object-contain" />
-                                    ) : (
-                                        <span className="text-sm font-bold uppercase tracking-widest">{company.name}</span>
-                                    )}
-                                </div>
-                            ))}
-                        </div>
-                    </div>
-                </section>
-            )}
-
-            {/* FOOTER - Architectural Split */}
-            <footer id="contato" className="flex flex-col md:flex-row min-h-[600px] border-t border-[oklch(80%_0.01_220)]">
-                <div className="w-full md:w-1/2 bg-[oklch(20%_0.01_220)] text-white p-12 lg:p-24 flex flex-col justify-between">
-                    <div>
-                        <img src={logo} alt="Isotek Logo" className="h-10 w-auto brightness-0 invert mb-12" />
-                        <p className="max-w-prose text-white/60 text-lg leading-relaxed mb-16">
-                            Elevando o padrão de qualidade da sua empresa com tecnologia de ponta, processos simplificados e foco total na excelência operacional.
+            {/* ============================= FOOTER ============================= */}
+            <footer id="contato" className="flex min-h-[460px] flex-col lg:flex-row">
+                {/* Left — navy */}
+                <div className="relative flex w-full flex-col justify-between overflow-hidden bg-[#021f3a] p-12 text-white lg:w-1/2 lg:p-20">
+                    <div className="relative z-10">
+                        <IsotekLogo light height={32} className="mb-9" />
+                        <p className="mb-11 max-w-md text-base leading-relaxed text-white/70">
+                            Gestão da qualidade baseada na ISO 9001:2015. Processos organizados, documentação rastreável e foco
+                            na melhoria contínua, sem a burocracia de sempre.
                         </p>
-                        <nav className="grid grid-cols-2 gap-x-8 gap-y-6">
-                            {['Início', 'Sobre Nós', 'Método', 'Contato'].map(link => (
-                                <button 
-                                    key={link} 
-                                    onClick={() => scrollToSection(link === 'Início' ? 'inicio' : link === 'Sobre Nós' ? 'sobre' : link === 'Método' ? 'funcionalidades' : 'contato')}
-                                    className="text-left text-[10px] font-black uppercase tracking-widest text-white/40 hover:text-white transition-colors"
+                        <nav className="grid max-w-xs grid-cols-2 gap-y-3" aria-label="Navegação do rodapé">
+                            {NAV_LINKS.map((link) => (
+                                <button
+                                    key={link.id}
+                                    onClick={() => scrollToSection(link.id)}
+                                    className="text-left text-sm font-medium text-white/55 transition-colors hover:text-white"
                                 >
-                                    {link}
+                                    {link.label}
                                 </button>
                             ))}
+                            <button
+                                onClick={handleLoginClick}
+                                className="text-left text-sm font-medium text-white/55 transition-colors hover:text-white"
+                            >
+                                Entrar
+                            </button>
                         </nav>
                     </div>
-                    <div className="text-[10px] text-white/20 font-bold uppercase tracking-widest mt-12">
-                        © 2024 Isotek Systems. Premium Quality Management.
+                    <div className="relative z-10 mt-12 text-sm text-white/40">
+                        © {new Date().getFullYear()} Isotek. Gestão da qualidade ISO 9001.
                     </div>
                 </div>
 
-                <div className="w-full md:w-1/2 bg-[oklch(60%_0.15_220)] text-white p-12 lg:p-24 relative overflow-hidden flex flex-col justify-center">
+                {/* Right — teal */}
+                <div className="relative flex w-full flex-col justify-center overflow-hidden bg-brand-teal p-12 text-brand-navy lg:w-1/2 lg:p-20">
                     <div className="relative z-10 max-w-md">
-                        <div className="inline-block px-3 py-1 bg-white/10 text-white/80 text-[10px] font-black uppercase tracking-widest mb-6">
-                            Newsletter
-                        </div>
-                        <h3 className="text-4xl md:text-5xl font-extrabold tracking-tighter mb-6">
-                            Mantenha a sua <br />excelência em dia.
+                        <h3 className="text-balance text-3xl font-extrabold tracking-tight text-brand-navy md:text-4xl">
+                            Receba boas práticas de gestão da qualidade
                         </h3>
-                        <p className="text-white/70 mb-10 text-lg max-w-prose">
-                            Junte-se a mais de 5.000 líderes que já recebem nossas estratégias exclusivas de gestão.
+                        <p className="mb-8 mt-4 font-medium text-brand-navy/75">
+                            Conteúdos práticos sobre ISO 9001, auditorias e melhoria contínua direto no seu e-mail.
                         </p>
-                        <div className="space-y-4">
-                            <input
-                                type="email"
-                                placeholder="E-mail corporativo"
-                                className="w-full px-6 py-4 rounded-sm bg-white/10 border border-white/20 text-white placeholder:text-white/40 focus:outline-none focus:ring-1 focus:ring-white/50 transition-all"
-                            />
-                            <button className="w-full py-4 bg-white text-[oklch(20%_0.01_220)] font-black uppercase tracking-widest hover:bg-gray-100 transition-all text-sm">
-                                Assinar Agora
-                            </button>
-                        </div>
-                    </div>
-                    <div className="absolute -bottom-20 -right-20 opacity-10 pointer-events-none">
-                        <CheckCircle2 size={400} />
+
+                        {footerSent ? (
+                            <p className="flex items-center gap-2 rounded-lg bg-brand-navy/10 px-5 py-4 font-semibold text-brand-navy">
+                                <Check className="h-5 w-5" strokeWidth={2.5} aria-hidden="true" />
+                                Inscrição confirmada. Obrigado!
+                            </p>
+                        ) : (
+                            <form
+                                onSubmit={(e) => {
+                                    e.preventDefault();
+                                    setFooterSent(true);
+                                    setFooterEmail('');
+                                }}
+                                className="space-y-3"
+                            >
+                                <label htmlFor="footer-email" className="sr-only">
+                                    E-mail corporativo
+                                </label>
+                                <input
+                                    id="footer-email"
+                                    type="email"
+                                    required
+                                    autoComplete="email"
+                                    placeholder="E-mail corporativo"
+                                    value={footerEmail}
+                                    onChange={(e) => setFooterEmail(e.target.value)}
+                                    className="w-full rounded-lg border border-brand-navy/20 bg-brand-navy/5 px-5 py-3.5 font-medium text-brand-navy placeholder:text-brand-navy/55 transition-all focus:border-transparent focus:bg-white/30 focus:outline-none focus:ring-2 focus:ring-brand-navy"
+                                />
+                                <button
+                                    type="submit"
+                                    className="w-full rounded-lg bg-brand-navy py-3.5 font-semibold text-white shadow-md transition-all hover:bg-brand-navy/90"
+                                >
+                                    Assinar
+                                </button>
+                            </form>
+                        )}
                     </div>
                 </div>
             </footer>
