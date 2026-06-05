@@ -238,7 +238,8 @@ export const GamificationCard: React.FC<GamificationCardProps> = ({ className = 
                         // Se tiver payout no banco usa ele, senão calcula com base no nível atual
                         const tier = profileData?.commission_tier || level;
                         const customRate = profileData?.custom_commission_rate;
-                        const effectiveRate = customRate || (settingsData?.value?.[tier] ? settingsData.value[tier] * 100 : null);
+                        const tierRates = settingsData?.find(s => s.key === 'auditor_rates')?.value;
+                        const effectiveRate = customRate || (tierRates?.[tier] ? tierRates[tier] * 100 : null);
 
                         const payout = curr.auditor_payout ||
                             calculateAuditEarnings(globalBasePrice, tier, effectiveRate || undefined).auditorShare;

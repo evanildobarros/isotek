@@ -90,6 +90,7 @@ interface AuditorProfile {
     twitter_url?: string | null;
     linkedin_url?: string | null;
     instagram_url?: string | null;
+    bio?: string | null;
 }
 
 interface AuditorPublicProfileProps {

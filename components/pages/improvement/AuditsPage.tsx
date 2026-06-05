@@ -11,7 +11,7 @@ import { ConfirmModal } from '../../common/ConfirmModal';
 import { rewardXP } from '../../../lib/utils/gamification';
 
 const AuditsPageContent: React.FC = () => {
-    const { user, company } = useAuthContext();
+    const { user, company, role } = useAuthContext();
     const { effectiveCompanyId, isAuditorMode } = useAuditor();
     const [audits, setAudits] = useState<Audit[]>([]);
     const [loading, setLoading] = useState(true);
@@ -174,7 +174,7 @@ const AuditsPageContent: React.FC = () => {
             if (error) throw error;
 
             // Se quem concluiu foi um auditor, ganha XP
-            if (user?.role === 'auditor') {
+            if (role === 'auditor') {
                 await rewardXP(user.id, 50, 'audit_completed');
                 toast.success('🎉 +50 XP! Auditoria concluída com sucesso.');
             } else {

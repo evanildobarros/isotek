@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "dev:optimized": "NODE_OPTIONS='--max-old-space-size=512' vite --clearScreen false",
-    "build": "vite build",
+    "build": "tsc --noEmit && vite build",
     "preview": "vite preview"
   },
   "dependencies": {

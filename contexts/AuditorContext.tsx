@@ -49,7 +49,7 @@ interface AuditorContextType {
 const AuditorContext = createContext<AuditorContextType | undefined>(undefined);
 
 export const AuditorProvider: React.FC<{ children: ReactNode }> = ({ children }) => {
-    const { user, company } = useAuthContext();
+    const { user, company, role } = useAuthContext();
     const [auditorAssignments, setAuditorAssignments] = useState<AuditAssignment[]>([]);
     const [viewingAsCompanyId, setViewingAsCompanyId] = useState<string | null>(null);
     const [viewingAsCompanyName, setViewingAsCompanyName] = useState<string | null>(null);
@@ -58,7 +58,7 @@ export const AuditorProvider: React.FC<{ children: ReactNode }> = ({ children })
 
     // 1. Memoize counts and basic status
     const isAuditorMode = !!viewingAsCompanyId;
-    const isActuallyAuditor = user?.role === 'auditor';
+    const isActuallyAuditor = role === 'auditor';
     const effectiveCompanyId = viewingAsCompanyId || (isActuallyAuditor ? null : company?.id) || null;
 
     // 2. Fetch Assignments logically separated from Auth
