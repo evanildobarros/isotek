@@ -1,9 +1,10 @@
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;600;700;800;900&family=JetBrains+Mono:wght@400;500;600&display=swap');
 
 @import "tailwindcss";
 
 @theme {
   --font-sans: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
   
   --color-primary: #0FDBAB;
   --color-primary-light: #8CE67E;
@@ -13,12 +14,141 @@
   --color-accent: #8CE67E;
   
   --color-brand-navy: #012B51;
+  --color-brand-navy-deep: #021F3A;
   --color-brand-teal: #0FDBAB;
   --color-brand-cream: #eedcb3;
   --color-brand-cream-light: #f4ead4;
   --color-brand-card: #081424;
   
   --transition-industrial: all 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+/* ===========================================================================
+   Isotek design tokens — single source of truth (synced from the Isotek
+   Design System). Reference these custom properties in components rather than
+   raw hex values. See README of the design system for rationale.
+   =========================================================================== */
+:root {
+  /* --- Brand core ------------------------------------------------------- */
+  --isotek-navy:        #012B51;
+  --isotek-navy-deep:   #021F3A;
+  --isotek-navy-card:   #081424;
+  --isotek-teal:        #0FDBAB;
+  --isotek-teal-bright: #10DCAB;
+  --isotek-green:       #8CE67E;
+
+  /* --- App teal scale (chrome of the SaaS product) ---------------------- */
+  --isotek-deep-900:    #013636;
+  --isotek-deep-800:    #015252;
+  --isotek-deep-700:    #025159;  /* PRIMARY app color */
+  --isotek-deep-600:    #3F858C;
+  --isotek-deep-500:    #03A6A6;
+  --isotek-deep-400:    #67B7BF;
+  --isotek-deep-300:    #8FB2BF;
+  --isotek-deep-100:    #D5DCF2;
+  --isotek-deep-50:     #EAF3F4;
+
+  /* --- Warm accents ----------------------------------------------------- */
+  --isotek-terra:       #BF7B54;
+  --isotek-cream:       #EEDCB3;
+  --isotek-cream-light: #F4EAD4;
+
+  /* --- Neutral / slate ramp -------------------------------------------- */
+  --white:    #FFFFFF;
+  --slate-50: #F8FAFC;
+  --gray-50:  #F9FAFB;
+  --gray-100: #F3F4F6;
+  --gray-200: #E5E7EB;
+  --gray-300: #D1D5DB;
+  --gray-400: #9CA3AF;
+  --gray-500: #6B7280;
+  --gray-600: #4B5563;
+  --gray-700: #374151;
+  --gray-800: #1F2937;
+  --gray-900: #111827;
+
+  /* --- Semantic status -------------------------------------------------- */
+  --success: #22C55E;  --success-bg: #DCFCE7;  --success-text: #15803D;
+  --warning: #EAB308;  --warning-bg: #FEF9C3;  --warning-text: #A16207;
+  --danger:  #EF4444;  --danger-bg:  #FEE2E2;  --danger-text:  #B91C1C;
+  --info:    #2563EB;  --info-bg:    #DBEAFE;  --info-text:    #1D4ED8;
+
+  /* --- Semantic aliases (reference these in components) ----------------- */
+  --color-bg-app:            var(--gray-50);
+  --color-surface:           var(--white);
+  --color-surface-subtle:    var(--gray-50);
+  --color-surface-dark:      var(--isotek-navy);
+  --color-surface-darker:    var(--isotek-navy-deep);
+  --color-surface-card-dark: var(--isotek-navy-card);
+
+  --color-border:         var(--gray-200);
+  --color-border-subtle:  var(--gray-100);
+  --color-border-strong:  var(--gray-300);
+  --color-border-on-dark: rgba(255, 255, 255, 0.10);
+
+  --color-text:             var(--gray-900);
+  --color-text-secondary:   var(--gray-600);
+  --color-text-muted:       var(--gray-500);
+  --color-text-faint:       var(--gray-400);
+  --color-text-on-dark:     var(--white);
+  --color-text-on-dark-dim: rgba(255, 255, 255, 0.72);
+  --color-heading:          var(--isotek-deep-700);
+
+  --color-primary:       var(--isotek-deep-700);
+  --color-primary-hover: var(--isotek-deep-600);
+  --color-secondary:     var(--isotek-deep-500);
+  --color-cta:           var(--isotek-teal);
+  --color-cta-text:      var(--isotek-navy);
+  --color-accent:        var(--isotek-teal);
+  --color-focus-ring:    var(--isotek-deep-700);
+
+  --color-auditor:          var(--isotek-terra);
+  --color-auditor-bar:      #FBBF24;
+  --color-auditor-bar-text: #78350F;
+
+  /* --- Typography ------------------------------------------------------- */
+  --font-sans: 'Poppins', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+  --font-mono: 'JetBrains Mono', ui-monospace, SFMono-Regular, Menlo, Consolas, monospace;
+
+  --fw-regular: 400; --fw-medium: 500; --fw-semibold: 600;
+  --fw-bold: 700; --fw-extra: 800; --fw-black: 900;
+
+  --text-xs: 0.75rem; --text-sm: 0.875rem; --text-base: 1rem; --text-lg: 1.125rem;
+  --text-xl: 1.25rem; --text-2xl: 1.5rem; --text-3xl: 1.875rem;
+  --text-4xl: 2.25rem; --text-5xl: 3rem;
+
+  --display-hero:    clamp(2.6rem, 6vw, 3.85rem);
+  --display-section: clamp(1.75rem, 3.5vw, 2.6rem);
+
+  --leading-tight: 1.05; --leading-snug: 1.2; --leading-normal: 1.5; --leading-relaxed: 1.65;
+  --tracking-tight: -0.02em; --tracking-normal: 0;
+  --tracking-wide: 0.05em; --tracking-wider: 0.1em;
+  --measure: 70ch;
+
+  /* --- Spacing ---------------------------------------------------------- */
+  --space-0: 0; --space-1: 0.25rem; --space-2: 0.5rem; --space-3: 0.75rem;
+  --space-4: 1rem; --space-5: 1.25rem; --space-6: 1.5rem; --space-8: 2rem;
+  --space-10: 2.5rem; --space-12: 3rem; --space-16: 4rem; --space-20: 5rem; --space-24: 6rem;
+
+  /* --- Layout ----------------------------------------------------------- */
+  --container-max: 80rem; --gutter: 1.5rem; --sidebar-w: 18rem; --header-h: 4rem;
+
+  /* --- Radii ------------------------------------------------------------ */
+  --radius-sm: 0.375rem; --radius-md: 0.5rem; --radius-lg: 0.75rem;
+  --radius-xl: 1rem; --radius-2xl: 1.5rem; --radius-full: 9999px;
+
+  /* --- Shadows — soft, navy-tinted; never heavy ------------------------- */
+  --shadow-xs:  0 1px 2px 0 rgba(1, 43, 81, 0.05);
+  --shadow-sm:  0 1px 3px 0 rgba(1, 43, 81, 0.08), 0 1px 2px -1px rgba(1, 43, 81, 0.06);
+  --shadow-md:  0 4px 6px -1px rgba(1, 43, 81, 0.08), 0 2px 4px -2px rgba(1, 43, 81, 0.06);
+  --shadow-lg:  0 10px 15px -3px rgba(1, 43, 81, 0.10), 0 4px 6px -4px rgba(1, 43, 81, 0.08);
+  --shadow-xl:  0 20px 25px -5px rgba(1, 43, 81, 0.12), 0 8px 10px -6px rgba(1, 43, 81, 0.08);
+  --shadow-teal: 0 10px 25px -5px rgba(15, 219, 171, 0.25);
+
+  /* --- Motion — signature curve is ease-out-expo ------------------------ */
+  --ease-industrial: cubic-bezier(0.22, 1, 0.36, 1);
+  --ease-standard:   cubic-bezier(0.4, 0, 0.2, 1);
+  --dur-fast: 0.2s; --dur-base: 0.3s; --dur-slow: 0.4s;
 }
 
 @layer base {

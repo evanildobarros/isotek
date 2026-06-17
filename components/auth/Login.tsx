@@ -1,9 +1,17 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, Link } from 'react-router-dom';
-import { Mail, Lock, ArrowRight, Loader2, Eye, EyeOff } from 'lucide-react';
+import { Mail, Lock, ArrowRight, Loader2, Eye, EyeOff, ShieldCheck, BarChart3, FileText } from 'lucide-react';
 import { toast } from 'sonner';
 import { useAuth } from '../../hooks/useAuth';
 import { supabase } from '../../lib/supabase';
+import brandSymbol from '../../assets/brand-symbol.png';
+import avatarCarlos from '../../assets/avatar-carlos.png';
+
+const features = [
+    { icon: ShieldCheck, title: 'Conformidade ISO 9001', desc: 'Auditorias e não-conformidades em um só lugar.' },
+    { icon: BarChart3, title: 'Indicadores em tempo real', desc: 'KPIs do SGQ atualizados automaticamente.' },
+    { icon: FileText, title: 'GED integrado', desc: 'Controle de documentos com versionamento.' },
+];
 
 export const Login: React.FC = () => {
     const navigate = useNavigate();
@@ -72,43 +80,101 @@ export const Login: React.FC = () => {
     };
 
     return (
-        <div
-            className="min-h-screen flex flex-col justify-center py-12 sm:px-6 lg:px-8 bg-cover bg-center bg-no-repeat relative overflow-hidden"
-            style={{
-                backgroundImage: "url('/assets/login-background-clean.png')",
-                backgroundColor: '#f8fafc'
-            }}
-        >
-            {/* Subtle overlay for better contrast */}
-            <div className="absolute inset-0 bg-white/10 backdrop-blur-[1px]"></div>
+        <div className="min-h-screen grid lg:grid-cols-[1.05fr_1fr] bg-white font-sans">
+            {/* ---- Brand panel (hidden on small screens) ---- */}
+            <div
+                className="relative hidden lg:flex flex-col justify-between overflow-hidden px-15 py-14 text-white"
+                style={{ background: 'radial-gradient(120% 120% at 0% 0%, #024c54 0%, #012B51 55%, #021F3A 100%)' }}
+            >
+                {/* decorative teal glow + watermark symbol */}
+                <div
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -top-32 -right-36 h-[420px] w-[420px] rounded-full"
+                    style={{ background: 'radial-gradient(circle, rgba(15,219,171,0.22) 0%, rgba(15,219,171,0) 70%)' }}
+                />
+                <img
+                    src={brandSymbol}
+                    alt=""
+                    aria-hidden="true"
+                    className="pointer-events-none absolute -bottom-16 -right-12 w-[360px] opacity-[0.08] -rotate-[8deg]"
+                />
 
-            <div className="sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-                <div className="flex justify-center mb-8">
-                    <Link to="/" className="transform hover:scale-105 transition-transform duration-300" title="Voltar para Home">
-                        <div className="p-4 bg-white rounded-2xl shadow-xl border border-gray-100 flex items-center justify-center">
-                            <img src="/logo_isotek.svg" alt="Isotek Logo" className="w-20 h-20 object-contain" />
-                        </div>
-                    </Link>
+                <div className="relative z-10 flex items-center gap-3">
+                    <img src={brandSymbol} alt="Isotek" className="h-10 w-10 object-contain" />
+                    <span className="text-2xl font-extrabold tracking-tight">Isotek</span>
                 </div>
-                <h2 className="text-center text-4xl font-extrabold text-[#025159] tracking-tight">
-                    Entrar na Plataforma
-                </h2>
-                <p className="mt-3 text-center text-lg text-slate-600 font-medium">
-                    Acesse sua conta Isotek
-                </p>
+
+                <div className="relative z-10">
+                    <div className="inline-flex items-center gap-2 rounded-full border border-brand-teal/30 bg-brand-teal/10 px-3.5 py-1.5 text-xs font-bold uppercase tracking-wide text-brand-teal">
+                        Plataforma SGQ
+                    </div>
+                    <h1 className="mt-5 text-4xl font-extrabold leading-tight tracking-tight text-balance">
+                        Gestão da qualidade,<br />sem planilhas soltas.
+                    </h1>
+                    <p className="mt-4 max-w-md text-base leading-relaxed text-white/70">
+                        Centralize auditorias, documentos e indicadores do seu Sistema de Gestão da Qualidade.
+                    </p>
+
+                    <div className="mt-9 flex flex-col gap-5">
+                        {features.map(({ icon: Icon, title, desc }) => (
+                            <div key={title} className="flex items-start gap-4">
+                                <div className="flex h-[42px] w-[42px] flex-shrink-0 items-center justify-center rounded-xl border border-brand-teal/30 bg-brand-teal/15 text-brand-teal">
+                                    <Icon size={20} />
+                                </div>
+                                <div>
+                                    <div className="text-[15px] font-bold">{title}</div>
+                                    <div className="mt-0.5 text-sm text-white/60">{desc}</div>
+                                </div>
+                            </div>
+                        ))}
+                    </div>
+                </div>
+
+                <div className="relative z-10 flex items-center gap-3.5 rounded-2xl border border-white/10 bg-white/5 px-5 py-4">
+                    <img
+                        src={avatarCarlos}
+                        alt=""
+                        className="h-11 w-11 rounded-full border-2 border-brand-teal/50 object-cover"
+                    />
+                    <div>
+                        <p className="text-sm italic leading-relaxed text-white/90">
+                            "Reduzimos em 40% o tempo de preparação para auditorias."
+                        </p>
+                        <p className="mt-1.5 text-xs font-semibold text-brand-teal">
+                            Carlos Mendes · Gerente da Qualidade
+                        </p>
+                    </div>
+                </div>
             </div>
 
-            <div className="mt-10 sm:mx-auto sm:w-full sm:max-w-md relative z-10">
-                <div className="bg-white/85 backdrop-blur-xl py-10 px-6 shadow-2xl sm:rounded-3xl sm:px-12 border border-white/70">
-                    <form className="space-y-6" onSubmit={handleSubmit}>
+            {/* ---- Form panel ---- */}
+            <div className="flex items-center justify-center px-6 py-12">
+                <div className="w-full max-w-[392px]">
+                    {/* Logo — visible on mobile where the brand panel is hidden */}
+                    <Link
+                        to="/"
+                        title="Voltar para Home"
+                        className="mb-8 inline-flex items-center justify-center rounded-2xl border border-gray-100 bg-white p-3 shadow-md transition-transform duration-300 hover:scale-105 lg:hidden"
+                    >
+                        <img src="/logo_isotek.svg" alt="Isotek Logo" className="h-12 w-12 object-contain" />
+                    </Link>
+
+                    <h2 className="text-3xl font-extrabold tracking-tight text-[#025159]">
+                        Bem-vindo de volta
+                    </h2>
+                    <p className="mt-2.5 text-base font-medium text-gray-500">
+                        Entre com suas credenciais para acessar o painel.
+                    </p>
+
+                    <form className="mt-8 flex flex-col gap-5" onSubmit={handleSubmit}>
                         <div>
-                            <label htmlFor="email" className="block text-sm font-semibold text-gray-700 mb-1">
+                            <label htmlFor="email" className="mb-1.5 block text-sm font-semibold text-gray-700">
                                 E-mail corporativo
                             </label>
-                            <div className="mt-1 relative group">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Mail className="h-5 w-5 text-gray-400 group-focus-within:text-isotek-500 transition-colors" aria-hidden="true" />
-                                </div>
+                            <div className="relative flex items-center">
+                                <span className="pointer-events-none absolute left-3.5 inline-flex text-gray-400">
+                                    <Mail size={18} aria-hidden="true" />
+                                </span>
                                 <input
                                     id="email"
                                     name="email"
@@ -117,20 +183,20 @@ export const Login: React.FC = () => {
                                     required
                                     value={email}
                                     onChange={(e) => setEmail(e.target.value)}
-                                    className="block w-full pl-11 pr-4 py-3 bg-white/50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-isotek-500/20 focus:border-isotek-500 transition-all sm:text-sm"
+                                    className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-11 pr-4 text-sm font-medium text-gray-900 placeholder-gray-400 transition-all focus:border-[#025159] focus:outline-none focus:ring-[3px] focus:ring-[#025159]/15"
                                     placeholder="seu@email.com"
                                 />
                             </div>
                         </div>
 
                         <div>
-                            <label htmlFor="password" className="block text-sm font-semibold text-gray-700 mb-1">
+                            <label htmlFor="password" className="mb-1.5 block text-sm font-semibold text-gray-700">
                                 Senha
                             </label>
-                            <div className="mt-1 relative group">
-                                <div className="absolute inset-y-0 left-0 pl-4 flex items-center pointer-events-none">
-                                    <Lock className="h-5 w-5 text-gray-400 group-focus-within:text-isotek-500 transition-colors" aria-hidden="true" />
-                                </div>
+                            <div className="relative flex items-center">
+                                <span className="pointer-events-none absolute left-3.5 inline-flex text-gray-400">
+                                    <Lock size={18} aria-hidden="true" />
+                                </span>
                                 <input
                                     id="password"
                                     name="password"
@@ -139,75 +205,67 @@ export const Login: React.FC = () => {
                                     required
                                     value={password}
                                     onChange={(e) => setPassword(e.target.value)}
-                                    className="block w-full pl-11 pr-12 py-3 bg-white/50 border border-gray-200 rounded-xl text-gray-900 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-isotek-500/20 focus:border-isotek-500 transition-all sm:text-sm"
+                                    className="w-full rounded-lg border border-gray-200 bg-white py-2.5 pl-11 pr-11 text-sm font-medium text-gray-900 placeholder-gray-400 transition-all focus:border-[#025159] focus:outline-none focus:ring-[3px] focus:ring-[#025159]/15"
                                     placeholder="••••••••"
                                 />
                                 <button
                                     type="button"
-                                    className="absolute inset-y-0 right-0 pr-4 flex items-center text-gray-400 hover:text-isotek-500 focus:outline-none transition-colors"
+                                    className="absolute right-3 inline-flex items-center text-gray-400 transition-colors hover:text-[#025159] focus:outline-none"
                                     onClick={() => setShowPassword(!showPassword)}
+                                    aria-label={showPassword ? 'Ocultar senha' : 'Mostrar senha'}
                                 >
-                                    {showPassword ? (
-                                        <EyeOff className="h-5 w-5" aria-hidden="true" />
-                                    ) : (
-                                        <Eye className="h-5 w-5" aria-hidden="true" />
-                                    )}
+                                    {showPassword ? <EyeOff size={18} aria-hidden="true" /> : <Eye size={18} aria-hidden="true" />}
                                 </button>
                             </div>
                         </div>
 
-                        <div className="flex items-center justify-between">
-                            <div className="flex items-center">
+                        <div className="flex items-center justify-between text-sm">
+                            <label htmlFor="remember-me" className="inline-flex cursor-pointer items-center gap-2 font-medium text-gray-600 hover:text-gray-900">
                                 <input
                                     id="remember-me"
                                     name="remember-me"
                                     type="checkbox"
-                                    className="h-4 w-4 text-isotek-600 focus:ring-isotek-500/30 border-gray-300 rounded-md cursor-pointer"
+                                    className="h-4 w-4 cursor-pointer rounded border-gray-300"
+                                    style={{ accentColor: '#03A6A6' }}
                                 />
-                                <label htmlFor="remember-me" className="ml-2 block text-sm text-gray-600 font-medium cursor-pointer hover:text-gray-900">
-                                    Lembrar-me
-                                </label>
-                            </div>
-
-                            <div className="text-sm">
-                                <a href="#" className="font-semibold text-isotek-600 hover:text-isotek-700 transition-colors">
-                                    Esqueceu sua senha?
-                                </a>
-                            </div>
+                                Lembrar-me
+                            </label>
+                            <a href="#" className="font-semibold text-[#028a8a] transition-colors hover:text-[#025159]">
+                                Esqueceu sua senha?
+                            </a>
                         </div>
 
-                        <div className="pt-2">
-                            <button
-                                type="submit"
-                                disabled={isLoading}
-                                className="relative w-full flex justify-center py-3.5 px-4 border border-transparent rounded-xl shadow-lg text-sm font-bold text-white bg-[#03A6A6] hover:bg-[#028a8a] focus:outline-none focus:ring-4 focus:ring-[#03A6A6]/30 disabled:opacity-70 disabled:cursor-not-allowed transition-all active:scale-[0.98] overflow-hidden group"
-                            >
-                                <div className="absolute inset-0 bg-white/10 transform -skew-x-12 -translate-x-full group-hover:translate-x-full transition-transform duration-700 ease-in-out"></div>
-                                {isLoading ? (
-                                    <Loader2 className="animate-spin h-5 w-5" />
-                                ) : (
-                                    <span className="flex items-center gap-2 relative z-10 text-white">
-                                        Login <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
-                                    </span>
-                                )}
-                            </button>
-                        </div>
+                        <button
+                            type="submit"
+                            disabled={isLoading}
+                            className="flex w-full items-center justify-center gap-2 rounded-lg bg-[#025159] py-3.5 text-[15px] font-bold text-white shadow-lg transition-all hover:bg-[#013636] focus:outline-none focus:ring-4 focus:ring-[#025159]/30 active:scale-[0.98] disabled:cursor-not-allowed disabled:opacity-70"
+                        >
+                            {isLoading ? (
+                                <Loader2 className="h-5 w-5 animate-spin" />
+                            ) : (
+                                <>
+                                    Entrar <ArrowRight size={18} />
+                                </>
+                            )}
+                        </button>
                     </form>
 
-                    <div className="mt-8">
-                        <div className="relative">
-                            <div className="absolute inset-0 flex items-center">
-                                <div className="w-full border-t border-gray-200" />
-                            </div>
-                            <div className="relative flex justify-center text-xs uppercase tracking-widest font-semibold">
-                                <span className="px-4 bg-white/80 rounded-full text-gray-400">
-                                    Segurança Isotek
-                                </span>
-                            </div>
-                        </div>
-                        <p className="text-center mt-4 text-[10px] text-gray-400 font-medium">
-                            Protegido por criptografia SSL de 256 bits
-                        </p>
+                    <button
+                        type="button"
+                        className="mt-3.5 flex w-full items-center justify-center gap-2.5 rounded-lg border border-gray-200 bg-white py-3 text-sm font-semibold text-gray-700 transition-all hover:bg-gray-50"
+                    >
+                        <ShieldCheck size={17} /> Entrar com SSO corporativo
+                    </button>
+
+                    <p className="mt-7 text-center text-sm text-gray-500">
+                        Não tem uma conta?{' '}
+                        <Link to="/" className="font-bold text-[#025159] hover:underline">
+                            Fale com o comercial
+                        </Link>
+                    </p>
+
+                    <div className="mt-7 flex items-center justify-center gap-2 text-[11px] font-semibold uppercase tracking-wide text-gray-400">
+                        <Lock size={13} /> Protegido por criptografia SSL de 256 bits
                     </div>
                 </div>
             </div>

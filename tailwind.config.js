@@ -29,12 +29,6 @@ export default {
                     light: '#D5DCF2', // Lavanda
                     medium: '#7790A6', // Azul-cinza
                 },
-                // Custom Brand Colors - AdobeColor-Arquitetura Palette
-                'brand-light': '#DCEEF2',  // Azul Gelo - Para fundos de seções claras
-                'brand-cream': '#F2D5A0',  // Creme/Areia - Para destaques suaves
-                'brand-salmon': '#D99873', // Salmão Suave - Para detalhes secundários
-                'brand-terra': '#BF7960',  // Terracota - Para Botões de Ação/CTA
-                'brand-brown': '#734636',  // Marrom Café - Para Textos Fortes, Rodapé e Títulos
             },
         },
     },
