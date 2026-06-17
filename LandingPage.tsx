@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Menu,
@@ -123,6 +123,21 @@ export const LandingPage: React.FC = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Pausa o vídeo ambiente do hero quando o usuário prefere movimento reduzido
+    const heroVideoRef = useRef<HTMLVideoElement>(null);
+    useEffect(() => {
+        const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const apply = () => {
+            const video = heroVideoRef.current;
+            if (!video) return;
+            if (mq.matches) video.pause();
+            else video.play().catch(() => {});
+        };
+        apply();
+        mq.addEventListener('change', apply);
+        return () => mq.removeEventListener('change', apply);
+    }, []);
+
     useEffect(() => {
         const fetchCompanyLogos = async () => {
             try {
@@ -242,6 +257,24 @@ export const LandingPage: React.FC = () => {
 
             {/* ============================= HERO ============================= */}
             <section id="inicio" className="relative flex min-h-[92vh] items-center overflow-hidden bg-brand-navy px-6 pb-24 pt-32 lg:pb-32 lg:pt-44">
+                {/* Ambient video background (navy/teal gradient loop) */}
+                <video
+                    ref={heroVideoRef}
+                    className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-70 motion-reduce:hidden"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    poster="/videos/hero-poster.jpg"
+                    aria-hidden="true"
+                >
+                    <source src="/videos/hero-loop.webm" type="video/webm" />
+                    <source src="/videos/hero-loop.mp4" type="video/mp4" />
+                </video>
+                {/* Navy scrim keeps white text at AA contrast over the video */}
+                <div className="pointer-events-none absolute inset-0 bg-gradient-to-b from-brand-navy/40 via-brand-navy/55 to-brand-navy" aria-hidden="true" />
+
                 {/* Decorative orbital rings */}
                 <div className="pointer-events-none absolute right-[-12%] top-[-8%] z-0 h-[620px] w-[620px] opacity-25">
                     <svg viewBox="0 0 200 200" className="h-full w-full" fill="none" aria-hidden="true">
@@ -253,22 +286,22 @@ export const LandingPage: React.FC = () => {
                 <div className="pointer-events-none absolute left-1/2 top-1/3 z-0 h-[700px] w-[700px] -translate-x-1/2 rounded-full bg-brand-teal/10 blur-[120px]" />
 
                 <div className="relative z-10 mx-auto grid w-full max-w-7xl items-center gap-14 lg:grid-cols-12">
-                    <div className="animate-industrial lg:col-span-6">
-                        <span className="inline-flex items-center gap-2 rounded-full border border-brand-teal/30 bg-brand-teal/10 px-4 py-1.5 text-sm font-medium text-brand-teal">
+                    <div className="lg:col-span-6">
+                        <span className="reveal reveal-1 inline-flex items-center gap-2 rounded-full border border-brand-teal/30 bg-brand-teal/10 px-4 py-1.5 text-sm font-medium text-brand-teal">
                             <span className="h-1.5 w-1.5 rounded-full bg-brand-teal" aria-hidden="true" />
                             SGQ baseado na ISO 9001:2015
                         </span>
 
-                        <h1 className="mt-6 text-balance text-[2.6rem] font-extrabold leading-[1.05] tracking-tight text-white sm:text-5xl lg:text-[3.85rem]">
+                        <h1 className="reveal reveal-2 mt-6 text-balance text-[length:clamp(2.6rem,6vw,3.85rem)] font-extrabold leading-[1.05] tracking-tight text-white">
                             A sua ISO 9001 sempre pronta para auditoria.
                         </h1>
 
-                        <p className="mt-6 max-w-xl text-lg leading-relaxed text-white/80">
+                        <p className="reveal reveal-3 mt-6 max-w-xl text-lg leading-relaxed text-white/80">
                             A Isotek reúne documentos, riscos, não conformidades, auditorias e indicadores em uma só plataforma.
                             Sua empresa para de correr atrás de planilha e passa a gerir a qualidade de forma contínua, no ciclo PDCA.
                         </p>
 
-                        <div className="mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
+                        <div className="reveal reveal-4 mt-9 flex flex-col gap-3 sm:flex-row sm:flex-wrap">
                             <button
                                 onClick={() => scrollToSection('demo')}
                                 className="inline-flex items-center justify-center gap-2 rounded-lg bg-brand-teal px-7 py-3.5 text-base font-semibold text-brand-navy shadow-lg shadow-brand-teal/20 transition-all hover:brightness-105 hover:shadow-xl hover:shadow-brand-teal/25"
@@ -285,7 +318,7 @@ export const LandingPage: React.FC = () => {
                         </div>
 
                         {/* Honest trust line — product facts, not fake logos */}
-                        <ul className="mt-10 flex flex-wrap gap-x-6 gap-y-2.5 text-sm text-white/65">
+                        <ul className="reveal reveal-4 mt-10 flex flex-wrap gap-x-6 gap-y-2.5 text-sm text-white/65">
                             {['Ciclo PDCA completo', 'Portal do auditor', 'Multiempresa e multiunidade'].map((item) => (
                                 <li key={item} className="inline-flex items-center gap-2">
                                     <Check className="h-4 w-4 text-brand-teal" strokeWidth={2.5} aria-hidden="true" />
@@ -296,7 +329,7 @@ export const LandingPage: React.FC = () => {
                     </div>
 
                     {/* Product mockup + brand symbol watermark */}
-                    <div className="relative flex min-h-[420px] items-center justify-center lg:col-span-6 lg:min-h-[620px]">
+                    <div className="reveal reveal-3 relative flex min-h-[420px] items-center justify-center lg:col-span-6 lg:min-h-[620px]">
                         <div className="pointer-events-none absolute -z-0 flex h-[80vh] max-h-[540px] items-center justify-center lg:max-h-[680px]">
                             <img src={brandSymbol} alt="" aria-hidden="true" className="h-full w-auto object-contain opacity-50" />
                         </div>
@@ -346,7 +379,7 @@ export const LandingPage: React.FC = () => {
             <section id="recursos" className="bg-brand-navy py-24 lg:py-28">
                 <div className="mx-auto max-w-7xl px-6">
                     <div className="max-w-2xl">
-                        <h2 className="text-balance text-3xl font-extrabold tracking-tight text-white md:text-[2.6rem] md:leading-[1.1]">
+                        <h2 className="text-balance text-[length:clamp(1.75rem,3.5vw,2.6rem)] font-extrabold leading-[1.1] tracking-tight text-white">
                             Tudo o que a norma pede, em um sistema só
                         </h2>
                         <p className="mt-4 text-lg leading-relaxed text-white/70">
@@ -376,13 +409,13 @@ export const LandingPage: React.FC = () => {
             </section>
 
             {/* ======================= COMO FUNCIONA (PDCA) ======================= */}
-            <section id="como-funciona" className="relative overflow-hidden bg-[#021f3a] py-24 lg:py-28">
+            <section id="como-funciona" className="relative overflow-hidden bg-brand-navy-deep py-24 lg:py-28">
                 <div className="pointer-events-none absolute -right-20 bottom-0 h-[360px] w-[360px] opacity-[0.07]">
                     <img src={brandSymbol} alt="" aria-hidden="true" className="h-full w-full object-contain" />
                 </div>
                 <div className="relative z-10 mx-auto max-w-7xl px-6">
                     <div className="max-w-2xl">
-                        <h2 className="text-balance text-3xl font-extrabold tracking-tight text-white md:text-[2.6rem] md:leading-[1.1]">
+                        <h2 className="text-balance text-[length:clamp(1.75rem,3.5vw,2.6rem)] font-extrabold leading-[1.1] tracking-tight text-white">
                             Como a Isotek organiza sua qualidade
                         </h2>
                         <p className="mt-4 text-lg leading-relaxed text-white/70">
@@ -415,7 +448,7 @@ export const LandingPage: React.FC = () => {
             <section id="depoimentos" className="border-b border-gray-100 bg-white py-24 lg:py-28">
                 <div className="mx-auto max-w-7xl px-6">
                     <div className="max-w-2xl">
-                        <h2 className="text-balance text-3xl font-extrabold tracking-tight text-brand-navy md:text-[2.6rem] md:leading-[1.1]">
+                        <h2 className="text-balance text-[length:clamp(1.75rem,3.5vw,2.6rem)] font-extrabold leading-[1.1] tracking-tight text-brand-navy">
                             Quem já tirou a qualidade do papel
                         </h2>
                         <p className="mt-4 text-lg leading-relaxed text-brand-navy/65">
@@ -453,7 +486,7 @@ export const LandingPage: React.FC = () => {
                 <div className="pointer-events-none absolute left-1/2 top-1/2 h-[600px] w-[600px] -translate-x-1/2 -translate-y-1/2 rounded-full bg-brand-teal/10 blur-[130px]" />
                 <div className="relative z-10 mx-auto grid max-w-6xl items-center gap-14 px-6 lg:grid-cols-2">
                     <div>
-                        <h2 className="text-balance text-3xl font-extrabold tracking-tight text-white md:text-[2.6rem] md:leading-[1.1]">
+                        <h2 className="text-balance text-[length:clamp(1.75rem,3.5vw,2.6rem)] font-extrabold leading-[1.1] tracking-tight text-white">
                             Veja a Isotek funcionando na sua operação
                         </h2>
                         <p className="mt-5 text-lg leading-relaxed text-white/75">
@@ -550,7 +583,7 @@ export const LandingPage: React.FC = () => {
             {/* ============================= FOOTER ============================= */}
             <footer id="contato" className="flex min-h-[460px] flex-col lg:flex-row">
                 {/* Left — navy */}
-                <div className="relative flex w-full flex-col justify-between overflow-hidden bg-[#021f3a] p-12 text-white lg:w-1/2 lg:p-20">
+                <div className="relative flex w-full flex-col justify-between overflow-hidden bg-brand-navy-deep p-12 text-white lg:w-1/2 lg:p-20">
                     <div className="relative z-10">
                         <IsotekLogo light height={32} className="mb-9" />
                         <p className="mb-11 max-w-md text-base leading-relaxed text-white/70">

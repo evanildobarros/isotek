@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useEffect, useState, useRef } from 'react';
 import { useNavigate } from 'react-router-dom';
 import {
     Users,
@@ -115,6 +115,21 @@ export const AuditorsPublicPage: React.FC = () => {
         return () => window.removeEventListener('scroll', handleScroll);
     }, []);
 
+    // Pausa o vídeo ambiente do hero quando o usuário prefere movimento reduzido
+    const heroVideoRef = useRef<HTMLVideoElement>(null);
+    useEffect(() => {
+        const mq = window.matchMedia('(prefers-reduced-motion: reduce)');
+        const apply = () => {
+            const video = heroVideoRef.current;
+            if (!video) return;
+            if (mq.matches) video.pause();
+            else video.play().catch(() => {});
+        };
+        apply();
+        mq.addEventListener('change', apply);
+        return () => mq.removeEventListener('change', apply);
+    }, []);
+
     const scrollToTop = () => {
         window.scrollTo({ top: 0, behavior: 'smooth' });
     };
@@ -124,7 +139,7 @@ export const AuditorsPublicPage: React.FC = () => {
     };
 
     return (
-        <div className="min-h-screen bg-white font-sans text-[#2D3773]">
+        <div className="min-h-screen bg-white font-sans text-[#012B51]">
             {/* HEADER / NAV */}
             <header
                 className={`fixed w-full z-50 transition-all duration-300 ${isScrolled ? 'bg-white/95 backdrop-blur-md shadow-lg py-3' : 'bg-transparent py-5'
@@ -144,7 +159,7 @@ export const AuditorsPublicPage: React.FC = () => {
                         <nav className="hidden md:flex items-center gap-6 lg:gap-8">
                             <button
                                 onClick={() => navigate('/')}
-                                className={`text-sm font-semibold transition-colors ${isScrolled ? 'text-[#2D3773] hover:text-[#0AADBF]' : 'text-white hover:text-[#4AD9D9]'}`}
+                                className={`text-sm font-semibold transition-colors ${isScrolled ? 'text-[#012B51] hover:text-[#03A6A6]' : 'text-white hover:text-[#0FDBAB]'}`}
                             >
                                 Início
                             </button>
@@ -152,7 +167,7 @@ export const AuditorsPublicPage: React.FC = () => {
                             {/* Serviços Dropdown */}
                             <div className="relative group" onMouseEnter={() => setIsServicesOpen(true)} onMouseLeave={() => setIsServicesOpen(false)}>
                                 <button
-                                    className={`flex items-center gap-1 text-sm font-semibold transition-colors ${isScrolled ? 'text-[#2D3773] hover:text-[#0AADBF]' : 'text-white hover:text-[#4AD9D9]'}`}
+                                    className={`flex items-center gap-1 text-sm font-semibold transition-colors ${isScrolled ? 'text-[#012B51] hover:text-[#03A6A6]' : 'text-white hover:text-[#0FDBAB]'}`}
                                 >
                                     Serviços
                                     <ChevronDown size={14} className={`transition-transform duration-300 ${isServicesOpen ? 'rotate-180' : ''}`} />
@@ -163,13 +178,13 @@ export const AuditorsPublicPage: React.FC = () => {
                                         <div className="bg-white rounded-2xl shadow-2xl border border-gray-100 overflow-hidden py-2">
                                             <button
                                                 onClick={() => { navigate('/'); setTimeout(() => document.getElementById('funcionalidades')?.scrollIntoView({ behavior: 'smooth' }), 100); setIsServicesOpen(false); }}
-                                                className="w-full text-left px-5 py-3 text-sm font-bold text-[#2D3773] hover:bg-[#E0F7F9]/40 hover:text-[#0AADBF] transition-all"
+                                                className="w-full text-left px-5 py-3 text-sm font-bold text-[#012B51] hover:bg-[#F8FAFC]/40 hover:text-[#03A6A6] transition-all"
                                             >
                                                 Método
                                             </button>
                                             <button
                                                 onClick={() => { setIsServicesOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }}
-                                                className="w-full text-left px-5 py-3 text-sm font-bold text-[#0AADBF] bg-[#E0F7F9]/20"
+                                                className="w-full text-left px-5 py-3 text-sm font-bold text-[#03A6A6] bg-[#F8FAFC]/20"
                                             >
                                                 Auditores
                                             </button>
@@ -181,8 +196,8 @@ export const AuditorsPublicPage: React.FC = () => {
                             <button
                                 onClick={handleLoginClick}
                                 className={`px-6 py-2 border-2 text-sm font-bold rounded-full transition-all ${isScrolled
-                                    ? 'border-[#2D3773] text-[#2D3773] hover:bg-[#2D3773] hover:text-white'
-                                    : 'border-white text-white hover:bg-white hover:text-[#2D3773]'
+                                    ? 'border-[#012B51] text-[#012B51] hover:bg-[#012B51] hover:text-white'
+                                    : 'border-white text-white hover:bg-white hover:text-[#012B51]'
                                     }`}
                             >
                                 Entrar
@@ -191,7 +206,7 @@ export const AuditorsPublicPage: React.FC = () => {
 
                         {/* Mobile Menu Button */}
                         <button
-                            className={`md:hidden p-2 rounded-lg transition-colors ${isScrolled ? 'text-[#2D3773] hover:bg-[#E0F7F9]/30' : 'text-white hover:bg-white/10'}`}
+                            className={`md:hidden p-2 rounded-lg transition-colors ${isScrolled ? 'text-[#012B51] hover:bg-[#F8FAFC]/30' : 'text-white hover:bg-white/10'}`}
                             onClick={() => setIsMenuOpen(!isMenuOpen)}
                             aria-label="Toggle Menu"
                         >
@@ -202,20 +217,20 @@ export const AuditorsPublicPage: React.FC = () => {
 
                 {/* Mobile Nav */}
                 {isMenuOpen && (
-                    <div className="md:hidden bg-white/98 backdrop-blur-xl border-b border-[#4AD9D9]/30 animate-fade-in absolute w-full shadow-2xl overflow-hidden">
+                    <div className="md:hidden bg-white/98 backdrop-blur-xl border-b border-[#0FDBAB]/30 animate-fade-in absolute w-full shadow-2xl overflow-hidden">
                         <div className="px-4 pt-4 pb-8 space-y-3">
-                            <button onClick={() => navigate('/')} className="block w-full text-left px-4 py-3 text-lg font-bold text-[#2D3773] hover:bg-[#E0F7F9]/40 rounded-xl transition-all">Início</button>
+                            <button onClick={() => navigate('/')} className="block w-full text-left px-4 py-3 text-lg font-bold text-[#012B51] hover:bg-[#F8FAFC]/40 rounded-xl transition-all">Início</button>
 
                             <div className="space-y-1">
                                 <div className="px-4 py-2 text-xs font-black text-gray-400 uppercase tracking-widest">Serviços</div>
-                                <button onClick={() => { navigate('/'); setTimeout(() => document.getElementById('funcionalidades')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="block w-full text-left px-8 py-2 text-base font-bold text-[#2D3773] hover:text-[#0AADBF] transition-all">Método</button>
-                                <button onClick={() => { setIsMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="block w-full text-left px-8 py-2 text-base font-bold text-[#0AADBF] transition-all">Auditores</button>
+                                <button onClick={() => { navigate('/'); setTimeout(() => document.getElementById('funcionalidades')?.scrollIntoView({ behavior: 'smooth' }), 100); }} className="block w-full text-left px-8 py-2 text-base font-bold text-[#012B51] hover:text-[#03A6A6] transition-all">Método</button>
+                                <button onClick={() => { setIsMenuOpen(false); window.scrollTo({ top: 0, behavior: 'smooth' }); }} className="block w-full text-left px-8 py-2 text-base font-bold text-[#03A6A6] transition-all">Auditores</button>
                             </div>
 
                             <div className="pt-4 px-2">
                                 <button
                                     onClick={() => navigate('/login')}
-                                    className="w-full px-6 py-4 bg-[#2D3773] text-white text-lg font-bold rounded-xl hover:bg-[#2D3773]/90 transition-all shadow-lg active:scale-95"
+                                    className="w-full px-6 py-4 bg-[#012B51] text-white text-lg font-bold rounded-xl hover:bg-[#012B51]/90 transition-all shadow-lg active:scale-95"
                                 >
                                     Entrar na Plataforma
                                 </button>
@@ -226,36 +241,51 @@ export const AuditorsPublicPage: React.FC = () => {
             </header>
 
             {/* HERO SECTION */}
-            <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 bg-[#2D3773] overflow-hidden">
-                <div className="absolute inset-0 bg-gradient-to-br from-[#2D3773] via-[#16558C] to-[#0378A6] opacity-90"></div>
+            <section className="relative pt-32 pb-20 lg:pt-48 lg:pb-32 bg-[#012B51] overflow-hidden">
+                {/* Ambient video background */}
+                <video
+                    ref={heroVideoRef}
+                    className="pointer-events-none absolute inset-0 h-full w-full object-cover opacity-60 motion-reduce:hidden"
+                    autoPlay
+                    muted
+                    loop
+                    playsInline
+                    preload="metadata"
+                    poster="/videos/hero-poster.jpg"
+                    aria-hidden="true"
+                >
+                    <source src="/videos/hero-loop.webm" type="video/webm" />
+                    <source src="/videos/hero-loop.mp4" type="video/mp4" />
+                </video>
+                <div className="absolute inset-0 bg-gradient-to-br from-[#012B51] via-[#012B51]/80 to-[#021F3A] opacity-80"></div>
                 <div className="absolute -right-20 -bottom-20 opacity-10">
                     <Search size={500} className="text-white" />
                 </div>
 
                 <div className="max-w-7xl mx-auto px-4 relative z-10 text-center lg:text-left">
                     <div className="max-w-3xl">
-                        <div className="flex items-center gap-3 mb-6">
+                        <div className="reveal reveal-1 flex items-center gap-3 mb-6">
                             <div className="flex flex-col items-center">
-                                <span className="text-[10px] uppercase tracking-widest text-blue-200/70 font-bold mb-1">Certificação Garantida</span>
+                                <span className="text-[10px] uppercase tracking-widest text-white/60 font-bold mb-1">Certificação Garantida</span>
                                 <div className="bg-white/10 p-1 rounded-lg backdrop-blur-sm">
                                     <img src={logo} alt="ISO 9001" className="h-8 w-auto brightness-0 invert" />
                                 </div>
                             </div>
                         </div>
-                        <h1 className="text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-12">
-                            Transforme a Gestão de Auditoria em <span className="text-[#0AADBF]">Vantagem Competitiva</span>
+                        <h1 className="reveal reveal-2 text-4xl md:text-6xl lg:text-7xl font-black text-white leading-tight mb-12">
+                            Transforme a Gestão de Auditoria em <span className="text-[#0FDBAB]">Vantagem Competitiva</span>
                         </h1>
-                        <p className="text-xl text-blue-100/80 mb-10 leading-relaxed">
+                        <p className="reveal reveal-3 text-xl text-white/80 mb-10 leading-relaxed">
                             Mais do que verificadores, os auditores são agentes de mudança. Conheça como a Isotek empodera esses profissionais para transformar conformidade em vantagem competitiva.
                         </p>
-                        <div className="flex flex-col items-start justify-center lg:items-start gap-4">
+                        <div className="reveal reveal-4 flex flex-col items-start justify-center lg:items-start gap-4">
                             <button
                                 onClick={() => navigate('/login')}
-                                className="px-8 py-4 bg-[#FACC15] text-black font-bold rounded-xl hover:bg-[#FACC15]/90 transition-all shadow-xl hover:scale-105 active:scale-95"
+                                className="px-8 py-4 bg-[#0FDBAB] text-[#012B51] font-bold rounded-lg hover:brightness-105 transition-all shadow-lg shadow-[#0FDBAB]/20 hover:shadow-xl hover:shadow-[#0FDBAB]/25 active:scale-95"
                             >
                                 Começar Agora
                             </button>
-                            <span className="text-blue-100/60 text-xs font-medium ml-2">Demonstração gratuita e rápida</span>
+                            <span className="text-white/60 text-xs font-medium ml-2">Demonstração gratuita e rápida</span>
                         </div>
                     </div>
                 </div>
@@ -267,7 +297,7 @@ export const AuditorsPublicPage: React.FC = () => {
                     <div className="flex flex-col lg:flex-row gap-10 lg:gap-16">
                         {/* Lado Esquerdo: Texto de Introdução */}
                         <div className="lg:w-1/3">
-                            <h2 className="text-4xl font-extrabold text-[#2D3773] mb-6">Nosso Time</h2>
+                            <h2 className="text-4xl font-extrabold text-[#012B51] mb-6">Nosso Time</h2>
                             <p className="text-gray-500 text-lg leading-relaxed">
                                 Somos um grupo dinâmico de indivíduos apaixonados pelo que fazemos e dedicados a entregar os melhores resultados para nossos clientes e parceiros.
                             </p>
@@ -305,7 +335,7 @@ export const AuditorsPublicPage: React.FC = () => {
                                                         }`}
                                                 />
                                             ) : (
-                                                <div className="w-full h-full bg-gradient-to-br from-[#0AADBF] to-[#2D3773] flex items-center justify-center text-white text-6xl font-bold">
+                                                <div className="w-full h-full bg-gradient-to-br from-[#03A6A6] to-[#012B51] flex items-center justify-center text-white text-6xl font-bold">
                                                     {auditor.name.charAt(0)}
                                                 </div>
                                             )}
@@ -315,7 +345,7 @@ export const AuditorsPublicPage: React.FC = () => {
                                                 <AuditorPublicProfile
                                                     auditorId={auditor.id}
                                                     auditorName={auditor.name}
-                                                    className="text-2xl font-bold text-gray-900 hover:text-[#0AADBF] transition-colors"
+                                                    className="text-2xl font-bold text-gray-900 hover:text-[#03A6A6] transition-colors"
                                                 />
                                             </div>
                                             <p className="text-gray-500 font-medium text-lg mb-6">{auditor.role}</p>
@@ -330,7 +360,7 @@ export const AuditorsPublicPage: React.FC = () => {
                                                 )}
                                                 {auditor.linkedin && (
                                                     <a href={auditor.linkedin} target="_blank" rel="noopener noreferrer">
-                                                        <Linkedin size={20} className="cursor-pointer hover:text-[#0AADBF] transition-colors" />
+                                                        <Linkedin size={20} className="cursor-pointer hover:text-[#03A6A6] transition-colors" />
                                                     </a>
                                                 )}
                                                 {auditor.instagram && (
@@ -356,14 +386,14 @@ export const AuditorsPublicPage: React.FC = () => {
                         <p className="text-gray-500 max-w-2xl mx-auto text-lg leading-relaxed">
                             Diferentes perspectivas que se unem para um único propósito: a evolução contínua da sua organização.
                         </p>
-                        <div className="w-20 h-1.5 bg-[#0AADBF] mx-auto mt-6 rounded-full"></div>
+                        <div className="w-20 h-1.5 bg-[#03A6A6] mx-auto mt-6 rounded-full"></div>
                     </div>
 
                     <div className="grid md:grid-cols-3 gap-8">
                         {/* Perfil 1: Interno */}
                         <div className="p-8 bg-gray-50 rounded-3xl border border-gray-100 hover:shadow-2xl transition-all duration-500 group relative overflow-hidden">
-                            <div className="w-14 h-14 bg-[#2D3773]/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-[#2D3773] transition-colors duration-500">
-                                <Users size={28} className="text-[#2D3773] group-hover:text-white transition-colors" />
+                            <div className="w-14 h-14 bg-[#012B51]/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-[#012B51] transition-colors duration-500">
+                                <Users size={28} className="text-[#012B51] group-hover:text-white transition-colors" />
                             </div>
                             <h3 className="text-2xl font-bold mb-4">Auditor Interno</h3>
                             <p className="text-gray-500 mb-6 font-medium">
@@ -371,8 +401,8 @@ export const AuditorsPublicPage: React.FC = () => {
                             </p>
                             <ul className="space-y-3">
                                 {['Mapeamento de Processos', 'Cultura da Qualidade', 'Auto-avaliação'].map((item) => (
-                                    <li key={item} className="flex items-center gap-2 text-sm font-bold text-[#2D3773]/70">
-                                        <CheckCircle2 size={16} className="text-[#0AADBF]" />
+                                    <li key={item} className="flex items-center gap-2 text-sm font-bold text-[#012B51]/70">
+                                        <CheckCircle2 size={16} className="text-[#03A6A6]" />
                                         {item}
                                     </li>
                                 ))}
@@ -380,19 +410,19 @@ export const AuditorsPublicPage: React.FC = () => {
                         </div>
 
                         {/* Perfil 2: Externo */}
-                        <div className="p-8 bg-[#2D3773] text-white rounded-3xl shadow-xl md:scale-110 z-10 relative overflow-hidden">
+                        <div className="p-8 bg-[#012B51] text-white rounded-3xl shadow-xl md:scale-110 z-10 relative overflow-hidden">
                             <div className="absolute top-0 right-0 w-32 h-32 bg-white/5 rounded-full -translate-x-10 -translate-y-10"></div>
-                            <div className="w-14 h-14 bg-[#0AADBF] rounded-2xl flex items-center justify-center mb-8">
-                                <ShieldCheck size={28} className="text-white" />
+                            <div className="w-14 h-14 bg-[#0FDBAB] rounded-2xl flex items-center justify-center mb-8">
+                                <ShieldCheck size={28} className="text-[#012B51]" />
                             </div>
                             <h3 className="text-2xl font-bold mb-4">Auditor Externo</h3>
-                            <p className="text-blue-100/70 mb-6 font-medium">
+                            <p className="text-white/70 mb-6 font-medium">
                                 A voz da imparcialidade. Valida a conformidade normativa e garante a credibilidade das certificações internacionais.
                             </p>
                             <ul className="space-y-3">
                                 {['Certificação ISO', 'Visão Imparcial', 'Validação Técnica'].map((item) => (
-                                    <li key={item} className="flex items-center gap-2 text-sm font-bold text-[#4AD9D9]">
-                                        <CheckCircle2 size={16} className="text-[#4AD9D9]" />
+                                    <li key={item} className="flex items-center gap-2 text-sm font-bold text-[#0FDBAB]">
+                                        <CheckCircle2 size={16} className="text-[#0FDBAB]" />
                                         {item}
                                     </li>
                                 ))}
@@ -401,8 +431,8 @@ export const AuditorsPublicPage: React.FC = () => {
 
                         {/* Perfil 3: Líder */}
                         <div className="p-8 bg-gray-50 rounded-3xl border border-gray-100 hover:shadow-2xl transition-all duration-500 group relative overflow-hidden">
-                            <div className="w-14 h-14 bg-[#0378A6]/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-[#0378A6] transition-colors duration-500">
-                                <BarChart size={28} className="text-[#0378A6] group-hover:text-white transition-colors" />
+                            <div className="w-14 h-14 bg-[#03A6A6]/10 rounded-2xl flex items-center justify-center mb-8 group-hover:bg-[#03A6A6] transition-colors duration-500">
+                                <BarChart size={28} className="text-[#03A6A6] group-hover:text-white transition-colors" />
                             </div>
                             <h3 className="text-2xl font-bold mb-4">Líder de Auditoria</h3>
                             <p className="text-gray-500 mb-6 font-medium">
@@ -410,8 +440,8 @@ export const AuditorsPublicPage: React.FC = () => {
                             </p>
                             <ul className="space-y-3">
                                 {['Gestão de Equipes', 'Visão Estratégica', 'Relatórios Executivos'].map((item) => (
-                                    <li key={item} className="flex items-center gap-2 text-sm font-bold text-[#2D3773]/70">
-                                        <CheckCircle2 size={16} className="text-[#0AADBF]" />
+                                    <li key={item} className="flex items-center gap-2 text-sm font-bold text-[#012B51]/70">
+                                        <CheckCircle2 size={16} className="text-[#03A6A6]" />
                                         {item}
                                     </li>
                                 ))}
@@ -422,20 +452,20 @@ export const AuditorsPublicPage: React.FC = () => {
             </section>
 
             {/* IMPORTANCIA PARA A EMPRESA */}
-            <section className="py-24 bg-[#E0F7F9]">
+            <section className="py-24 bg-[#F8FAFC]">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
                     <div className="grid lg:grid-cols-2 gap-16 items-center">
                         <div>
-                            <div className="inline-block px-4 py-1.5 bg-[#0AADBF]/10 text-[#0378A6] text-xs font-bold uppercase tracking-wider rounded-full mb-6">
+                            <div className="inline-block px-4 py-1.5 bg-[#03A6A6]/10 text-[#03A6A6] text-xs font-bold uppercase tracking-wider rounded-full mb-6">
                                 Relevância Estratégica
                             </div>
                             <h2 className="text-3xl md:text-5xl font-black mb-8 leading-tight">
-                                Por que Auditoria é o <span className="text-[#0AADBF]">Coração</span> do Sucesso?
+                                Por que Auditoria é o <span className="text-[#03A6A6]">Coração</span> do Sucesso?
                             </h2>
                             <div className="space-y-8">
                                 <div className="flex gap-6">
                                     <div className="flex-shrink-0 w-12 h-12 bg-white rounded-2xl shadow-md flex items-center justify-center">
-                                        <TrendingUp size={24} className="text-[#0AADBF]" />
+                                        <TrendingUp size={24} className="text-[#03A6A6]" />
                                     </div>
                                     <div>
                                         <h4 className="text-xl font-bold mb-2">Redução de Riscos</h4>
@@ -444,7 +474,7 @@ export const AuditorsPublicPage: React.FC = () => {
                                 </div>
                                 <div className="flex gap-6">
                                     <div className="flex-shrink-0 w-12 h-12 bg-white rounded-2xl shadow-md flex items-center justify-center">
-                                        <Search size={24} className="text-[#2D3773]" />
+                                        <Search size={24} className="text-[#012B51]" />
                                     </div>
                                     <div>
                                         <h4 className="text-xl font-bold mb-2">Transparência Total</h4>
@@ -453,7 +483,7 @@ export const AuditorsPublicPage: React.FC = () => {
                                 </div>
                                 <div className="flex gap-6">
                                     <div className="flex-shrink-0 w-12 h-12 bg-white rounded-2xl shadow-md flex items-center justify-center">
-                                        <ClipboardCheck size={24} className="text-[#0AADBF]" />
+                                        <ClipboardCheck size={24} className="text-[#03A6A6]" />
                                     </div>
                                     <div>
                                         <h4 className="text-xl font-bold mb-2">Melhoria Contínua</h4>
@@ -463,7 +493,7 @@ export const AuditorsPublicPage: React.FC = () => {
                             </div>
                         </div>
                         <div className="relative group">
-                            <div className="absolute -inset-4 bg-gradient-to-tr from-[#0AADBF] to-[#4AD9D9] rounded-3xl opacity-20 blur-2xl group-hover:opacity-30 transition-opacity"></div>
+                            <div className="absolute -inset-4 bg-gradient-to-tr from-[#03A6A6] to-[#0FDBAB] rounded-3xl opacity-20 blur-2xl group-hover:opacity-30 transition-opacity"></div>
                             <img
                                 src="https://images.unsplash.com/photo-1573164713988-8665fc963095?auto=format&fit=crop&w=800&q=80"
                                 alt="Auditor working with tablet"
@@ -477,27 +507,27 @@ export const AuditorsPublicPage: React.FC = () => {
             {/* ISOTEK PARA AUDITORES */}
             <section className="py-24 bg-white">
                 <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-                    <h2 className="text-3xl md:text-5xl font-black mb-16">Ferramentas de <span className="text-[#0AADBF]">Ponta</span></h2>
+                    <h2 className="text-3xl md:text-5xl font-black mb-16">Ferramentas de <span className="text-[#03A6A6]">Ponta</span></h2>
 
                     <div className="grid md:grid-cols-4 gap-8">
                         {[
                             {
-                                icon: <FileText className="text-[#2D3773]" />,
+                                icon: <FileText className="text-[#012B51]" />,
                                 title: "Evidências Digitais",
                                 desc: "Adeus papelada. Tudo centralizado e acessível em um clique."
                             },
                             {
-                                icon: <ClipboardCheck className="text-[#0AADBF]" />,
+                                icon: <ClipboardCheck className="text-[#03A6A6]" />,
                                 title: "Relatórios de NC",
                                 desc: "Geração automática de não conformidades com fotos e logs."
                             },
                             {
-                                icon: <CheckCircle2 className="text-[#4AD9D9]" />,
+                                icon: <CheckCircle2 className="text-[#0FDBAB]" />,
                                 title: "Planos de Ação",
                                 desc: "Acompanhe a correção das falhas em tempo real e de forma visual."
                             },
                             {
-                                icon: <Search className="text-[#16558C]" />,
+                                icon: <Search className="text-[#021F3A]" />,
                                 title: "Histórico Completo",
                                 desc: "Rastreabilidade total para auditorias passadas e futuras."
                             }
@@ -517,26 +547,26 @@ export const AuditorsPublicPage: React.FC = () => {
             {/* CTA FINAL */}
             <section className="py-20">
                 <div className="max-w-5xl mx-auto px-4">
-                    <div className="bg-[#2D3773] rounded-[2rem] p-12 lg:p-20 text-center relative overflow-hidden shadow-2xl">
+                    <div className="bg-[#012B51] rounded-[2rem] p-12 lg:p-20 text-center relative overflow-hidden shadow-2xl">
                         <div className="absolute top-0 left-0 w-full h-full opacity-5 pointer-events-none">
                             <ShieldCheck size={400} />
                         </div>
                         <h2 className="text-3xl md:text-5xl font-black text-white mb-8 relative z-10">
                             Pronto para elevar o nível da sua auditoria?
                         </h2>
-                        <p className="text-blue-100/70 text-lg mb-12 max-w-2xl mx-auto relative z-10">
+                        <p className="text-white/70 text-lg mb-12 max-w-2xl mx-auto relative z-10">
                             Simplifique o trabalho complexo e foque na excelência da sua gestão com as ferramentas que os melhores auditores recomendam.
                         </p>
                         <div className="flex flex-col sm:flex-row gap-4 justify-center relative z-10">
                             <button
                                 onClick={() => navigate('/login')}
-                                className="px-10 py-5 bg-[#0AADBF] text-white font-black rounded-2xl hover:bg-[#0AADBF]/90 transition-all text-lg uppercase tracking-widest shadow-xl"
+                                className="px-10 py-5 bg-[#0FDBAB] text-[#012B51] font-bold rounded-xl hover:brightness-105 transition-all text-lg shadow-lg shadow-[#0FDBAB]/20"
                             >
                                 Experimentar Isotek
                             </button>
                             <button
                                 onClick={() => navigate('/')}
-                                className="px-10 py-5 border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white hover:text-[#2D3773] transition-all text-lg"
+                                className="px-10 py-5 border-2 border-white/30 text-white font-bold rounded-2xl hover:bg-white hover:text-[#012B51] transition-all text-lg"
                             >
                                 Ver Soluções
                             </button>
@@ -553,9 +583,9 @@ export const AuditorsPublicPage: React.FC = () => {
                         <span className="text-gray-400 font-bold text-sm tracking-widest uppercase">Auditors Focus</span>
                     </div>
                     <div className="flex gap-8 text-sm font-bold text-gray-400">
-                        <button onClick={() => navigate('/')} className="hover:text-[#2D3773] transition-colors">Início</button>
-                        <button onClick={() => navigate('/login')} className="hover:text-[#2D3773] transition-colors">Entrar</button>
-                        <button onClick={scrollToTop} className="hover:text-[#2D3773] transition-colors">Voltar ao Topo</button>
+                        <button onClick={() => navigate('/')} className="hover:text-[#012B51] transition-colors">Início</button>
+                        <button onClick={() => navigate('/login')} className="hover:text-[#012B51] transition-colors">Entrar</button>
+                        <button onClick={scrollToTop} className="hover:text-[#012B51] transition-colors">Voltar ao Topo</button>
                     </div>
                     <div className="text-xs text-gray-300 font-medium">
                         © 2024 Isotek Systems. Premium Quality Management.
