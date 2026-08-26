@@ -13,8 +13,10 @@ export interface PlanLimits {
     usage: {
         usersUsed: number;
         usersLimit: number;
-        storageUsed: number;
-        storageLimit: number;
+        /** Soma de document.file_size desta empresa */
+        storageUsedBytes: number;
+        /** Limite do plano convertido para bytes (a partir de storage_gb) */
+        storageLimitBytes: number;
     };
     refresh: () => void;
 }
@@ -56,7 +58,7 @@ const PLAN_ACCESS_RULES: Record<PlanId, string[]> = {
 export function usePlanLimits(): PlanLimits {
     const { company, isSuperAdmin } = useAuthContext();
     const [usersCount, setUsersCount] = useState(0);
-    const [storageCount, setStorageCount] = useState(0);
+    const [storageBytes, setStorageBytes] = useState(0);
 
     const fetchUsage = async () => {
         if (!company?.id) return;
@@ -70,8 +72,16 @@ export function usePlanLimits(): PlanLimits {
 
             if (!userError) setUsersCount(count || 0);
 
-            // TODO: Calculate storage usage from documents
-            setStorageCount(0);
+            // Storage usage: soma dos arquivos de documentos da empresa (file_size em bytes)
+            const { data: docSizes, error: storageError } = await supabase
+                .from('documents')
+                .select('file_size')
+                .eq('company_id', company.id);
+
+            if (!storageError && docSizes) {
+                const totalBytes = docSizes.reduce((acc, doc) => acc + (doc.file_size || 0), 0);
+                setStorageBytes(totalBytes);
+            }
         } catch (error) {
             console.error('Error fetching plan usage:', error);
         }
@@ -95,6 +105,10 @@ export function usePlanLimits(): PlanLimits {
         };
 
         const canAddUser = isSuperAdmin || usersCount < maxUsers;
+
+        // Convenção: 1 GB = 1024³ bytes. Sentinela 999999 = "Ilimitado" (ver CompanyProfilePage).
+        const BYTES_PER_GB = 1024 ** 3;
+        const storageLimitBytes = maxStorage >= 999999 ? Number.MAX_SAFE_INTEGER : maxStorage * BYTES_PER_GB;
 
         const canAccessModule = (moduleName: string): boolean => {
             const normalizedModule = moduleName.toLowerCase();
@@ -122,11 +136,11 @@ export function usePlanLimits(): PlanLimits {
             usage: {
                 usersUsed: usersCount,
                 usersLimit: maxUsers,
-                storageUsed: storageCount,
-                storageLimit: maxStorage
+                storageUsedBytes: storageBytes,
+                storageLimitBytes
             },
             refresh: fetchUsage
         };
-    }, [company, usersCount, storageCount]);
+    }, [company, usersCount, storageBytes]);
 }
 
