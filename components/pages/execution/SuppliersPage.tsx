@@ -23,18 +23,7 @@ import { useAuditor } from '../../../contexts/AuditorContext';
 import { Supplier, SupplierEvaluation } from '../../../types';
 import { PlanGuard } from '../../auth/PlanGuard';
 import { ConfirmModal } from '../../common/ConfirmModal';
-
-// Função para formatar CNPJ: XX.XXX.XXX/XXXX-XX
-const formatCNPJ = (value: string): string => {
-    const numbers = value.replace(/\D/g, '');
-    const limited = numbers.slice(0, 14);
-    let formatted = limited;
-    if (limited.length > 2) formatted = limited.slice(0, 2) + '.' + limited.slice(2);
-    if (limited.length > 5) formatted = formatted.slice(0, 6) + '.' + formatted.slice(6);
-    if (limited.length > 8) formatted = formatted.slice(0, 10) + '/' + formatted.slice(10);
-    if (limited.length > 12) formatted = formatted.slice(0, 15) + '-' + formatted.slice(15);
-    return formatted;
-};
+import { formatCNPJ } from '../../../lib/utils/format';
 
 const SuppliersPageContent: React.FC = () => {
     const { user, company } = useAuthContext();

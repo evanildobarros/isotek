@@ -1,4 +1,20 @@
 /**
+ * Formata CNPJ para o padrão brasileiro: XX.XXX.XXX/XXXX-XX
+ * Remove caracteres não numéricos e limita a 14 dígitos.
+ * Segura para uso como máscara de input (parcial) ou exibição.
+ */
+export function formatCNPJ(value: string): string {
+    const numbers = value.replace(/\D/g, '');
+    const limited = numbers.slice(0, 14);
+    let formatted = limited;
+    if (limited.length > 2) formatted = limited.slice(0, 2) + '.' + limited.slice(2);
+    if (limited.length > 5) formatted = formatted.slice(0, 6) + '.' + formatted.slice(6);
+    if (limited.length > 8) formatted = formatted.slice(0, 10) + '/' + formatted.slice(10);
+    if (limited.length > 12) formatted = formatted.slice(0, 15) + '-' + formatted.slice(15);
+    return formatted;
+}
+
+/**
  * Formata data para o padrão brasileiro
  */
 export function formatDate(date: string | Date, includeTime = false): string {

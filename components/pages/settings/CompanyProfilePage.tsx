@@ -24,33 +24,10 @@ import { useAuthContext } from '../../../contexts/AuthContext';
 import { supabase } from '../../../lib/supabase';
 import { PageHeader } from '../../common/PageHeader';
 import { getAvailablePlans, upgradePlan, downgradePlan, checkPlanLimits } from '../../../lib/utils/supabase';
+import { formatCNPJ } from '../../../lib/utils/format';
 import type { Plan, PlanId, Invoice } from '../../../types';
 
-// Função para formatar CNPJ: XX.XXX.XXX/XXXX-XX
-const formatCNPJ = (value: string): string => {
-    // Remove tudo que não é número
-    const numbers = value.replace(/\D/g, '');
-
-    // Limita a 14 dígitos
-    const limited = numbers.slice(0, 14);
-
-    // Aplica a máscara
-    let formatted = limited;
-    if (limited.length > 2) {
-        formatted = limited.slice(0, 2) + '.' + limited.slice(2);
-    }
-    if (limited.length > 5) {
-        formatted = formatted.slice(0, 6) + '.' + formatted.slice(6);
-    }
-    if (limited.length > 8) {
-        formatted = formatted.slice(0, 10) + '/' + formatted.slice(10);
-    }
-    if (limited.length > 12) {
-        formatted = formatted.slice(0, 15) + '-' + formatted.slice(15);
-    }
-
-    return formatted;
-};
+// Funções utilitárias importadas de lib/utils/format
 
 export const CompanyProfilePage: React.FC = () => {
     const { company, refreshCompany } = useAuthContext();
